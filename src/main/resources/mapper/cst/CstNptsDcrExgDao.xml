@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsDcrExgDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsDcrExgEntity" id="cstNptsDcrExgMap">
+        <result property="id" column="id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="gNo" column="g_no"/>
+        <result property="emlSeqno" column="eml_seqno"/>
+        <result property="gdsMtno" column="gds_mtno"/>
+        <result property="gdecd" column="gdecd"/>
+        <result property="gdsnm" column="gdsnm"/>
+        <result property="dclUnitcd" column="dcl_unitcd"/>
+        <result property="expTotalQty" column="exp_total_qty"/>
+        <result property="dprcsCrdExpQty" column="dprcs_crd_exp_qty"/>
+        <result property="endprdRetnExchImpQty" column="endprd_retn_exch_imp_qty"/>
+        <result property="endprdRetnExchExpQty" column="endprd_retn_exch_exp_qty"/>
+        <result property="rmk" column="rmk"/>
+    </resultMap>
+
+
+</mapper>

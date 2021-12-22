@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsDirectoryShipCompanyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsDirectoryShipCompanyEntity" id="cbsDirectoryShipCompanyMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="contactor" column="contactor"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.cbs.entity.CbsDirectoryShipCompanyEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into cbs_directory_ship_company(name, contactor, phone, address, create_time, available, tenant_id)
+        values (#{name}, #{contactor}, #{phone}, #{address}, NOW(), available, #{tenantId})
+    </insert>
+
+    <select id="findSameToCtb" resultMap="cbsDirectoryShipCompanyMap">
+        select *
+        from cbs_directory_ship_company
+        where name = #{ctbEntity.name}
+          and contactor = #{ctbEntity.contactor}
+          and phone = #{ctbEntity.phone}
+          and address = #{ctbEntity.address}
+          and tenant_id = #{tenantId}
+        limit 1
+    </select>
+</mapper>

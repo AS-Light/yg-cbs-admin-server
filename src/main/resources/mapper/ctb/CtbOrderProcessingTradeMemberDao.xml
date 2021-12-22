@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbOrderProcessingTradeMemberDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbOrderProcessingTradeMemberEntity"
+               id="ctbOrderProcessingTradeMemberMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="fkOrderProcessingTradeId" column="fk_order_processing_trade_id"/>
+        <result property="fkPartnerId" column="fk_partner_id"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.ctb.entity.CtbOrderProcessingTradeMemberEntity"
+               extends="ctbOrderProcessingTradeMemberMap">
+        <association property="partnerEntity"
+                     column="fk_partner_id"
+                     javaType="io.renren.modules.ctb.entity.CtbPartnerEntity"
+                     select="io.renren.modules.ctb.dao.CtbPartnerDao.simpleDetailWithoutTenant"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbOrderProcessingTradeMemberEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_order_processing_trade_member(type, fk_order_processing_trade_id, fk_partner_id, ctb_tenant_id)
+        values (#{type}, #{fkOrderProcessingTradeId}, #{fkPartnerId}, #{ctbTenantId})
+    </insert>
+
+    <select id="listByOrderProcessingTradeId" resultMap="simpleDetailMap">
+        select *
+        from ctb_order_processing_trade_member
+        where fk_order_processing_trade_id = #{orderProcessingTradeId}
+    </select>
+
+    <select id="detail" resultMap="simpleDetailMap">
+        select *
+        from ctb_order_processing_trade_member
+        where id = #{id}
+    </select>
+
+    <delete id="deleteByOrderIdWithoutTenant">
+        delete
+        from ctb_order_processing_trade_member
+        where fk_order_processing_trade_id = #{orderId}
+    </delete>
+</mapper>

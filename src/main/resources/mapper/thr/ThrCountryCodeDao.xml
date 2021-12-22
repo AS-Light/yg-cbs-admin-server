@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrCountryCodeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrCountryCodeEntity" id="thrPsCountryCodeMap">
+        <result property="id" column="id"/>
+        <result property="shortKey" column="short_key"/>
+        <result property="code" column="code"/>
+        <result property="nameCn" column="name_cn"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="rateType" column="rate_type"/>
+    </resultMap>
+
+    <select id="selectByCode" resultMap="thrPsCountryCodeMap">
+        select *
+        from thr_country_code
+        where code = #{code}
+    </select>
+</mapper>

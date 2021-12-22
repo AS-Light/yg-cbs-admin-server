@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbImportPriceItemDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportPriceItemEntity" id="ctbImportPriceItemMap">
+        <result property="id" column="id"/>
+        <result property="fkImportId" column="fk_import_id"/>
+        <result property="fkMoneyTypeId" column="fk_money_type_id"/>
+        <result property="unitMoney" column="unit_money"/>
+        <result property="unit" column="unit"/>
+        <result property="count" column="count"/>
+        <result property="money" column="money"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="operator" column="operator"/>
+        <result property="rmk" column="rmk"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.ctb.entity.CtbImportPriceItemEntity"
+               extends="ctbImportPriceItemMap">
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="moneyTypeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbMoneyTypeEntity"
+                     column="fk_money_type_id"
+                     select="io.renren.modules.ctb.dao.CtbMoneyTypeDao.selectById"/>
+    </resultMap>
+
+    <select id="listByImportId" resultMap="detailMap">
+        select *
+        from ctb_import_price_item
+        where fk_import_id = #{importId}
+    </select>
+
+</mapper>

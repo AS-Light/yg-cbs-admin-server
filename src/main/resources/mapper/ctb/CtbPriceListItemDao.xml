@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbPriceListItemDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbPriceListItemEntity" id="ctbPriceListItemMap">
+        <result property="id" column="id"/>
+        <result property="fkPriceListId" column="fk_price_list_id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="taxRate" column="tax_rate"/>
+        <result property="isReimburse" column="is_reimburse"/>
+        <result property="unit" column="unit"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="listByPriceListId" resultMap="ctbPriceListItemMap">
+        select *
+        from ctb_price_list_item
+        where fk_price_list_id = #{priceListId}
+    </select>
+</mapper>

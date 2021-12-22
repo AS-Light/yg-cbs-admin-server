@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbStoreGoodsInItemDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbStoreGoodsInItemEntity" id="ctbStoreGoodsInItemMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsInId" column="fk_store_goods_in_id"/>
+        <result property="fkGoodsId" column="fk_goods_id"/>
+        <result property="goodsInCount" column="goods_in_count"/>
+        <result property="goodsStoreCount" column="goods_store_count"/>
+        <result property="createTime" column="create_time"/>
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryGoodsDao.selectById"/>
+    </resultMap>
+
+    <select id="listByStoreInId" resultMap="ctbStoreGoodsInItemMap">
+        select *
+        from ctb_store_goods_in_item
+        where fk_store_goods_in_id = #{storeInId}
+    </select>
+</mapper>

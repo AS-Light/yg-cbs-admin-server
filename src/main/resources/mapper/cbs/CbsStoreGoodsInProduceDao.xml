@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsInProduceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInProduceEntity" id="cbsStoreGoodsInProduceMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsInId" column="fk_store_goods_in_id"/>
+        <result property="fkProduceId" column="fk_produce_id"/>
+        <association property="goodsInEntity"
+                     javaType="CbsStoreGoodsInEntity"
+                     column="fk_store_goods_in_id"
+                     select="io.renren.modules.cbs.dao.CbsStoreGoodsInDao.detail"/>
+    </resultMap>
+
+    <select resultMap="cbsStoreGoodsInProduceMap" id="selectByProduceId">
+        select csgiip.*
+        from cbs_store_goods_in_produce csgiip
+        where csgiip.fk_produce_id = #{produceId}
+    </select>
+
+    <select resultMap="cbsStoreGoodsInProduceMap" id="selectByStoreInId">
+        select csgiip.*
+        from cbs_store_goods_in_produce csgiip
+        where csgiip.fk_store_goods_in_id = #{storeInId}
+    </select>
+
+    <select resultMap="cbsStoreGoodsInProduceMap" id="listByContract">
+        select csgiip.*
+        from cbs_store_goods_in_produce csgiip
+                 left join cbs_produce ci on ci.id = csgiip.fk_produce_id
+        where ci.fk_contract_id = #{contractId}
+    </select>
+
+    <select resultMap="cbsStoreGoodsInProduceMap" id="listByOutToProduceId">
+        select csgiip.*
+        from cbs_store_goods_in_produce csgiip
+                 right join cbs_produce ci on ci.id = csgiip.fk_produce_id
+                 right join cbs_contract cc on cc.id = ci.fk_contract_id
+                 left join cbs.cbs_produce cp on cp.fk_contract_id = cc.id
+        where cp.id = #{produceId}
+    </select>
+
+</mapper>

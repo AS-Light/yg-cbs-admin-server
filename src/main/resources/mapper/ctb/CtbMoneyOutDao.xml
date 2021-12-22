@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbMoneyOutDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="CtbMoneyOutEntity" id="ctbMoneyOutMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="orderType" column="order_type"/>
+        <result property="fkOrderId" column="fk_order_id"/>
+        <result property="fkMoneyTypeId" column="fk_money_type_id"/>
+        <result property="fkAccountId" column="fk_account_id"/>
+        <result property="title" column="title"/>
+        <result property="unitMoney" column="unit_money"/>
+        <result property="unit" column="unit"/>
+        <result property="count" column="count"/>
+        <result property="money" column="money"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="operator" column="operator"/>
+        <result property="rmk" column="rmk"/>
+        <result property="cny" column="cny"/>
+        <result property="isReimbursement" column="is_reimbursement"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+
+    <resultMap id="simpleDetailMap" type="CtbMoneyOutEntity" extends="ctbMoneyOutMap">
+        <association property="accountEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbAccountEntity"
+                     column="fk_account_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbAccountDao.selectById"/>
+        <association property="moneyTypeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbMoneyTypeEntity"
+                     column="fk_money_type_id"
+                     select="io.renren.modules.ctb.dao.CtbMoneyTypeDao.selectById"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="operatorEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbUserEntity"
+                     column="operator"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbUserDao.selectById"/>
+        <collection property="imgMoneyOutList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgMoneyOutEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgMoneyOutDao.listByMoneyOutId"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="CtbMoneyOutEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_money_out(fk_service_company_id, order_type, fk_order_id, fk_money_type_id, fk_account_id,
+                                  title, unit_money, unit, count, money, currency_code, status, create_time,
+                                  update_time, operator, rmk, cny, ctb_tenant_id)
+        values (#{fkServiceCompanyId}, #{orderType}, #{fkOrderId}, #{fkMoneyTypeId}, #{fkAccountId}, #{title},
+                #{unitMoney}, #{unit}, #{count}, #{money}, #{currencyCode}, #{status}, NOW(), NOW(), #{operator},
+                #{rmk}, #{cny}, #{ctbTenantId})
+    </insert>
+
+    <select id="queryIndex" resultMap="simpleDetailMap">
+        SELECT
+        cmo.*
+        FROM
+        ctb_money_out cmo
+        LEFT JOIN ctb_money_type cmt ON cmt.id = cmo.fk_money_type_id
+        LEFT JOIN org_cbs_company occ ON occ.id = cmo.fk_service_company_id
+        WHERE 1=1
+        -- 公司
+        <if test="ew.cbsCompanyName != null and ew.cbsCompanyName != ''">
+            AND occ.`name` LIKE concat('%',#{ew.cbsCompanyName},'%')
+        </if>
+        <if test="ew.fkServiceCompanyId != null and ew.fkServiceCompanyId != ''">
+            AND cmo.fk_service_company_id = #{ew.fkServiceCompanyId}
+        </if>
+        <if test="ew.isReimbursement != null and ew.isReimbursement == 0">
+            AND cmo.`is_reimbursement` = 0
+        </if>
+        <if test="ew.isReimbursement != null and ew.isReimbursement == 1">
+            AND cmo.`is_reimbursement` = 1
+        </if>
+        <if test="ew.title != null and ew.title != ''">
+            AND cmo.`title` LIKE concat('%',#{ew.title},'%')
+        </if>
+        <if test="ew.fkMoneyTypeId != null and ew.fkMoneyTypeId != ''">
+            AND cmo.`fk_money_type_id` = #{ew.fkMoneyTypeId}
+        </if>
+        <if test="ew.currencyCode != null and ew.currencyCode != ''">
+            AND cmo.`currency_code` = #{ew.currencyCode}
+        </if>
+        <if test="ew.status != null and ew.status != ''">
+            AND cmo.`status` = #{ew.status}
+        </if>
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND cmo.money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND cmo.money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(cmo.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(cmo.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+    </select>
+
+    <resultMap id="selectByIdsMap" type="CtbMoneyOutEntity" extends="ctbMoneyOutMap">
+        <association property="moneyTypeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbMoneyTypeEntity"
+                     column="fk_money_type_id"
+                     select="io.renren.modules.ctb.dao.CtbMoneyTypeDao.selectById"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="operatorEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbUserEntity"
+                     column="operator"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbUserDao.selectById"/>
+    </resultMap>
+    <select id="selectByIds" resultMap="selectByIdsMap">
+        SELECT * FROM ctb_money_out where id IN
+        <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsPurchaseDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsPurchaseEntity" id="cbsPurchaseMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="invoiceMoney" column="invoice_money"/>
+        <result property="invoiceCode" column="invoice_code"/>
+        <result property="fkStoreId" column="fk_store_id"/>
+        <result property="fkTransitCompanyId" column="fk_transit_company_id"/>
+        <result property="wagonNumber" column="wagon_number"/>
+        <result property="createTime" column="create_time"/>
+        <result property="departTime" column="depart_time"/>
+        <result property="arrivalTime" column="arrival_time"/>
+        <result property="deleteNote" column="delete_note"/>
+        <result property="examineTime" column="examine_time"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="operator" column="operator"/>
+        <result property="startAddress" column="start_address"/>
+        <result property="startContact" column="start_contact"/>
+        <result property="startPhone" column="start_phone"/>
+        <result property="endAddress" column="end_address"/>
+        <result property="endContact" column="end_contact"/>
+        <result property="endPhone" column="end_phone"/>
+        <result property="transFeeMoney" column="trans_fee_money"/>
+        <result property="synStoreIn" column="syn_store_in"/>
+        <result property="status" column="status"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsPurchaseEntity" extends="cbsPurchaseMap" id="simpleDetailMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.selectById"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsPurchaseEntity" id="simpleDetailWithGoodsItemsMap"
+               extends="cbsPurchaseMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.simpleDetail"/>
+        <collection property="purchaseGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsPurchaseGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsPurchaseGoodsDao.listByPurchaseId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsPurchaseEntity" id="detailMap"
+               extends="cbsPurchaseMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.simpleDetailWithGoods"/>
+        <collection property="purchaseGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsPurchaseGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsPurchaseGoodsDao.listByPurchaseId"/>
+        <collection property="storeEntity"
+                    ofType="io.renren.modules.cbs.entity.CbsDirectoryStoreEntity"
+                    column="fk_store_id"
+                    select="io.renren.modules.cbs.dao.CbsDirectoryStoreDao.selectById"/>
+        <collection property="transitCompanyEntity"
+                    ofType="io.renren.modules.cbs.entity.CbsDirectoryTransitCompanyEntity"
+                    column="fk_transit_company_id"
+                    select="io.renren.modules.cbs.dao.CbsDirectoryTransitCompanyDao.selectById"/>
+        <collection property="purchaseGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsPurchaseGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsPurchaseGoodsDao.listByPurchaseId"/>
+        <collection property="imgPurchaseDeliveryOrderList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgPurchaseDeliveryOrderEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgPurchaseDeliveryOrderDao.listByPurchaseId"/>
+        <collection property="imgPurchaseInvoiceList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgPurchaseInvoiceEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgPurchaseInvoiceDao.listByPurchaseId"/>
+        <collection property="imgPurchaseReceiptList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgPurchaseReceiptEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgPurchaseReceiptDao.listByPurchaseId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="simpleDetailWithGoodsItemsMap">
+        SELECT
+        i.*,
+        csgii.fk_store_goods_in_id storeGoodsInId,
+        csgi.`status` storeGoodsInStatus
+        FROM
+        cbs_purchase i
+        LEFT JOIN cbs_store_goods_in_purchase AS csgii ON i.id = csgii.fk_purchase_id
+        LEFT JOIN cbs_store_goods_in AS csgi ON csgii.fk_store_goods_in_id = csgi.id
+        LEFT JOIN cbs_contract c ON c.id = i.fk_contract_id
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        <if test="(ew.searchForm.partNo != null and ew.searchForm.partNo != '') or (ew.searchForm.inOutType != null and ew.searchForm.inOutType != '')">
+            LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+            LEFT JOIN cbs_goods_part_no gpn ON gpn.goods_part_no = cg.id
+            LEFT JOIN cbs_directory_goods dg ON dg.id = gpn.fk_goods_id
+        </if>
+        -- 有公司名称时连接
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            LEFT JOIN cbs_contract_member cm ON cm.fk_contract_id = c.id
+            LEFT JOIN cbs_partner p ON p.id = cm.fk_partner_id
+        </if>
+        WHERE 1=1
+        -- 合同
+        <if test="ew.searchForm.title != null and ew.searchForm.title != ''">
+            AND c.title LIKE concat('%',#{ew.searchForm.title},'%')
+        </if>
+        <if test="ew.searchForm.contractCode != null and ew.searchForm.contractCode != ''">
+            AND c.contract_code LIKE concat('%',#{ew.searchForm.contractCode},'%')
+        </if>
+        -- 料号
+        <if test="ew.searchForm.partNo != null and ew.searchForm.partNo != ''">
+            AND cg.id = #{ew.searchForm.partNo}
+        </if>
+        -- 进出口类型和商品名称
+        <if test="ew.searchForm.inOutType != null and ew.searchForm.inOutType != ''">
+            AND cg.type = #{ew.searchForm.inOutType}
+            AND dg.`name` LIKE concat('%',#{ew.searchForm.goodsName},'%')
+        </if>
+        -- 公司
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            AND p.`name` LIKE concat('%',#{ew.searchForm.companyName},'%')
+        </if>
+        -- 本表
+        <if test="ew.id != null">
+            AND i.id = #{ew.id}
+        </if>
+        <if test="ew.searchForm.status != null and ew.searchForm.status != ''">
+            AND i.`status` = #{ew.searchForm.status}
+        </if>
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND i.invoice_money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND i.invoice_money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.searchForm.departTime != null and ew.searchForm.departTime != ''">
+            AND DATE_FORMAT(i.depart_time, '%Y-%m-%d') = #{ew.searchForm.departTime}
+        </if>
+        <if test="ew.searchForm.arrivalTime != null and ew.searchForm.arrivalTime != ''">
+            AND DATE_FORMAT(i.arrival_time, '%Y-%m-%d') = #{ew.searchForm.arrivalTime}
+        </if>
+        GROUP BY
+        i.id
+        ORDER BY
+        i.id DESC
+    </select>
+
+    <select id="queryByContractIdWithGoods" resultMap="simpleDetailWithGoodsItemsMap">
+        select *
+        from cbs_purchase as cp
+        where cp.fk_contract_id = #{contractId}
+    </select>
+
+    <select id="queryForStoreIn" resultMap="simpleDetailMap">
+        select *
+        from cbs_purchase as ci
+                 left join cbs_store_goods_in_purchase as csgip on ci.id = csgip.fk_purchase_id
+        where ci.status = 4
+    </select>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from cbs_purchase
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailWithGoodsItems" resultMap="simpleDetailWithGoodsItemsMap">
+        select *
+        from cbs_purchase
+        where id = #{id}
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from cbs_purchase
+        where id = #{id}
+    </select>
+
+    <select id="listByContractId" resultMap="detailMap">
+        select *
+        from cbs_purchase
+        where fk_contract_id = #{contractId}
+    </select>
+</mapper>

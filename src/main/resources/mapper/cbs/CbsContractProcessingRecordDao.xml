@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsContractProcessingRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsContractProcessingRecordEntity" id="cbsContractProcessingRecordMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="customsRecordNum" column="customs_record_num"/>
+        <result property="passTime" column="pass_time"/>
+        <result property="filingStatus" column="filing_status"/>
+        <result property="reason" column="reason"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+</mapper>

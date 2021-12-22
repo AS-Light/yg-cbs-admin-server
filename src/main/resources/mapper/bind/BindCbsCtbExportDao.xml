@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.bind.dao.BindCbsCtbExportDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCtbExportEntity" id="bindCbsCtbExportMap">
+        <result property="id" column="id"/>
+        <result property="fkCbsCompanyId" column="fk_cbs_company_id"/>
+        <result property="fkCtbCompanyId" column="fk_ctb_company_id"/>
+        <result property="fkCbsExportId" column="fk_cbs_export_id"/>
+        <result property="fkCtbExportId" column="fk_ctb_export_id"/>
+        <result property="isWorkByCtb" column="is_work_by_ctb"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCtbExportEntity" id="indexMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="cbsExportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsExportEntity"
+                     column="fk_cbs_export_id"
+                     select="io.renren.modules.cbs.dao.CbsExportDao.selectById"/>
+        <association property="ctbExportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbExportEntity"
+                     column="fk_ctb_export_id"
+                     select="io.renren.modules.ctb.dao.CtbExportDao.selectById"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.bind.entity.BindCbsCtbExportEntity" extends="bindCbsCtbExportMap">
+        <association property="cbsExportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsExportEntity"
+                     column="fk_cbs_export_id"
+                     select="io.renren.modules.cbs.dao.CbsExportDao.detail"/>
+        <association property="ctbExportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbExportEntity"
+                     column="fk_ctb_export_id"
+                     select="io.renren.modules.ctb.dao.CtbExportDao.detail"/>
+    </resultMap>
+
+    <resultMap id="detailWithCbsMap" type="io.renren.modules.bind.entity.BindCbsCtbExportEntity"
+               extends="bindCbsCtbExportMap">
+        <association property="cbsExportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsExportEntity"
+                     column="fk_cbs_export_id"
+                     select="io.renren.modules.cbs.dao.CbsExportDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <resultMap id="detailWithCtbMap" type="io.renren.modules.bind.entity.BindCbsCtbExportEntity"
+               extends="bindCbsCtbExportMap">
+        <association property="ctbExportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbExportEntity"
+                     column="fk_ctb_export_id"
+                     select="io.renren.modules.ctb.dao.CtbExportDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+
+    </select>
+
+    <select id="detailWithCbs" resultMap="detailWithCbsMap">
+        select * from bind_cbs_ctb_export where fk_ctb_export_id = #{id}
+    </select>
+
+    <select id="detailWithCtb" resultMap="detailWithCtbMap">
+        select * from bind_cbs_ctb_export where fk_cbs_export_id = #{id}
+    </select>
+</mapper>

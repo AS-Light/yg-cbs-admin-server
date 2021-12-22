@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbMoneyTypeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbMoneyTypeEntity" id="ctbMoneyTypeMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="name" column="name"/>
+        <result property="defUnitPrice" column="def_unit_price"/>
+        <result property="defUnit" column="def_unit"/>
+        <result property="defTaxRate" column="def_tax_rate"/>
+        <result property="io" column="io"/>
+        <result property="isReimburse" column="is_reimburse"/>
+        <result property="available" column="available"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbMoneyTypeEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_money_type(fk_service_company_id, name, def_unit_price, def_unit, def_tax_rate, io,
+                                   is_reimburse, ctb_tenant_id)
+        values (#{fkServiceCompanyId}, #{name}, #{defUnitPrice}, #{defUnit}, #{defTaxRate}, #{io}, #{isReimburse},
+                #{ctbTenantId})
+    </insert>
+
+    <select id="listByServiceCompanyId" resultMap="ctbMoneyTypeMap">
+        select *
+        from ctb_money_type
+        where fk_service_company_id = #{serviceCompanyId}
+          and available = 1
+    </select>
+
+    <select id="listDef" resultMap="ctbMoneyTypeMap">
+        select *
+        from ctb_money_type
+        where fk_service_company_id = -1
+          and available = 1
+    </select>
+
+</mapper>

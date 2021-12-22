@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstInvtHeaderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstInvtHeaderEntity" id="cstInvtHeaderMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="bondInvtNo" column="bond_invt_no"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="putrecNo" column="putrec_no"/>
+        <result property="etpsInnerInvtNo" column="etps_inner_invt_no"/>
+        <result property="bizopEtpsSccd" column="bizop_etps_sccd"/>
+        <result property="bizopEtpsno" column="bizop_etpsno"/>
+        <result property="bizopEtpsNm" column="bizop_etps_nm"/>
+        <result property="rcvgdEtpsno" column="rcvgd_etpsno"/>
+        <result property="rvsngdRtpsSccd" column="rvsngd_rtps_sccd"/>
+        <result property="rcvgdEtpsNm" column="rcvgd_etps_nm"/>
+        <result property="dclEtpsSccd" column="dcl_etps_sccd"/>
+        <result property="dclEtpsno" column="dcl_etpsno"/>
+        <result property="dclEtpsNm" column="dcl_etps_nm"/>
+        <result property="invtDclTime" column="invt_dcl_time"/>
+        <result property="entryDclTime" column="entry_dcl_time"/>
+        <result property="entryNo" column="entry_no"/>
+        <result property="rltInvtNo" column="rlt_invt_no"/>
+        <result property="rltPutrecNo" column="rlt_putrec_no"/>
+        <result property="rltEntryNo" column="rlt_entry_no"/>
+        <result property="rltEntryBizopEtpsSccd" column="rlt_entry_bizop_etps_sccd"/>
+        <result property="rltEntryBizopEtpsno" column="rlt_entry_bizop_etpsno"/>
+        <result property="rltEntryBizopEtpsNm" column="rlt_entry_bizop_etps_nm"/>
+        <result property="rltEntryRvsngdEtpsSccd" column="rlt_entry_rvsngd_etps_sccd"/>
+        <result property="rltEntryRcvgdEtpsno" column="rlt_entry_rcvgd_etpsno"/>
+        <result property="rltEntryRcvgdEtpsNm" column="rlt_entry_rcvgd_etps_nm"/>
+        <result property="rltEntryDclEtpsSccd" column="rlt_entry_dcl_etps_sccd"/>
+        <result property="rltEntryDclEtpsno" column="rlt_entry_dcl_etpsno"/>
+        <result property="rltEntryDclEtpsNm" column="rlt_entry_dcl_etps_nm"/>
+        <result property="impexpPortcd" column="impexp_portcd"/>
+        <result property="dclPlcCuscd" column="dcl_plc_cuscd"/>
+        <result property="impexpMarkcd" column="impexp_markcd"/>
+        <result property="mtpckEndprdMarkcd" column="mtpck_endprd_markcd"/>
+        <result property="supvModecd" column="supv_modecd"/>
+        <result property="trspModecd" column="trsp_modecd"/>
+        <result property="dclcusFlag" column="dclcus_flag"/>
+        <result property="dclcusTypecd" column="dclcus_typecd"/>
+        <result property="vrfdedMarkcd" column="vrfded_markcd"/>
+        <result property="invtIochkptStucd" column="invt_iochkpt_stucd"/>
+        <result property="prevdTime" column="prevd_time"/>
+        <result property="formalVrfdedTime" column="formal_vrfded_time"/>
+        <result property="applyNo" column="apply_no"/>
+        <result property="listType" column="list_type"/>
+        <result property="inputCode" column="input_code"/>
+        <result property="inputCreditCode" column="input_credit_code"/>
+        <result property="inputName" column="input_name"/>
+        <result property="icCardNo" column="ic_card_no"/>
+        <result property="inputTime" column="input_time"/>
+        <result property="listStat" column="list_stat"/>
+        <result property="corrEntryDclEtpsSccd" column="corr_entry_dcl_etps_sccd"/>
+        <result property="corrEntryDclEtpsNo" column="corr_entry_dcl_etps_no"/>
+        <result property="corrEntryDclEtpsNm" column="corr_entry_dcl_etps_nm"/>
+        <result property="decType" column="dec_type"/>
+        <result property="chgTmsCnt" column="chg_tms_cnt"/>
+        <result property="stshipTrsarvNatcd" column="stship_trsarv_natcd"/>
+        <result property="invtType" column="invt_type"/>
+        <result property="entryStucd" column="entry_stucd"/>
+        <result property="passportUsedTypeCd" column="passport_used_type_cd"/>
+        <result property="dclTypecd" column="dcl_typecd"/>
+        <result property="needEntryModified" column="need_entry_modified"/>
+        <result property="levyBlAmt" column="levy_bl_amt"/>
+        <result property="rmk" column="rmk"/>
+        <result property="param1" column="param1"/>
+        <result property="param2" column="param2"/>
+        <result property="param3" column="param3"/>
+        <result property="genDecFlag" column="gen_dec_flag"/>
+        <result property="masterCuscd" column="master_cuscd"/>
+    </resultMap>
+
+
+</mapper>

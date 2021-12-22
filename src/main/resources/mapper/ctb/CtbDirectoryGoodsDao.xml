@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbDirectoryGoodsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity" id="ctbDirectoryGoodsMap">
+        <result property="id" column="id"/>
+        <result property="hsCode" column="hs_code"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="unitCode" column="unit_code"/>
+        <result property="unit" column="unit"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap id="detailMap"
+               type="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+               extends="ctbDirectoryGoodsMap">
+        <association property="hsCodeEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsCodeEntity"
+                     select="io.renren.modules.thr.dao.ThrHsCodeDao.selectByHsCode"
+                     column="hs_code"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_directory_goods(name, hs_code, nickname, unit_code, unit, create_time, available, ctb_tenant_id)
+        values (#{name}, #{hsCode}, #{nickname}, #{unitCode}, #{unit}, NOW(), 1, #{ctbTenantId})
+    </insert>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from ctb_directory_goods
+        where id = #{id}
+    </select>
+
+</mapper>

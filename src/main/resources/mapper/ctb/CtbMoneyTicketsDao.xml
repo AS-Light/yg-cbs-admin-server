@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbMoneyTicketsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="CtbMoneyTicketsEntity" id="ctbMoneyTicketsMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="invoice" column="invoice"/>
+        <result property="money" column="money"/>
+        <result property="tax" column="tax"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="operator" column="operator"/>
+        <result property="rmk" column="rmk"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap" type="CtbMoneyTicketsEntity" extends="ctbMoneyTicketsMap">
+        <association property="operatorEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbUserEntity"
+                     column="operator"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbUserDao.selectById"/>
+        <collection property="imgMoneyTicketsList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgMoneyTicketsEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgMoneyTicketsDao.listByMoneyTicketsId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="simpleDetailMap">
+        SELECT
+        cmt.*,
+        cdsc.`name` AS cbsCompanyName
+        FROM
+        ctb_money_tickets cmt
+        LEFT JOIN ctb_directory_service_company cdsc ON cdsc.id = cmt.fk_service_company_id
+        WHERE 1=1
+        <if test="ew.fkServiceCompanyId != null and ew.fkServiceCompanyId != ''">
+            AND cmt.fk_service_company_id = #{ew.fkServiceCompanyId}
+        </if>
+        <if test="ew.invoice != null and ew.invoice != ''">
+            AND cmt.`invoice` LIKE concat('%',#{ew.invoice},'%')
+        </if>
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND cmt.money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND cmt.money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(cmt.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(cmt.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+    </select>
+
+
+</mapper>

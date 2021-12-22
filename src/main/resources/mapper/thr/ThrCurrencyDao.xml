@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrCurrencyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrCurrencyEntity" id="thrCurrencyMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="abbreviation" column="abbreviation"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="nameCn" column="name_cn"/>
+        <result property="exchangeRate" column="exchange_rate"/>
+    </resultMap>
+
+    <update id="updateRateWithList" parameterType="java.util.List">
+        update thr_currency set exchange_rate = case id
+        <foreach collection="list" separator=" " item="item">
+            when #{item.id} then #{item.exchangeRate}
+        </foreach>
+        end
+    </update>
+
+    <select id="selectByCode" resultMap="thrCurrencyMap">
+        select *
+        from thr_currency
+        where code = #{code}
+    </select>
+</mapper>

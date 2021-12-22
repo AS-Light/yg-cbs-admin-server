@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsPartnerDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsPartnerEntity" id="cbsPartnerMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="fkCountryId" column="fk_country_id"/>
+        <result property="customsCode" column="customs_code"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="inspectionCode" column="inspection_code"/>
+        <result property="aeoCode" column="aeo_code"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="isTheCompany" column="is_the_company"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.cbs.entity.CbsPartnerEntity"
+               extends="cbsPartnerMap">
+        <association property="countryEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCountryCodeEntity"
+                     select="io.renren.modules.thr.dao.ThrCountryCodeDao.selectById"
+                     column="fk_country_id"/>
+        <collection property="typeList"
+                    select="io.renren.modules.cbs.dao.CbsPartnerTypeDao.listByPartnerId"
+                    ofType="io.renren.modules.cbs.entity.CbsPartnerTypeEntity"
+                    column="id"/>
+    </resultMap>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from cbs_partner
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailByCode" resultMap="simpleDetailMap">
+        select *
+        from cbs_partner
+        where customs_code = #{code}
+    </select>
+
+    <select id="listByTypes" resultMap="simpleDetailMap">
+        select *
+        from cbs_partner as cp
+        left join cbs_partner_type as cpt on cp.id = cpt.fk_partner_id
+        where cpt.type in
+        <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        <if test="name != null &amp;&amp; name != ''">
+            and cp.name like concat('%',#{name},'%')
+        </if>
+        and cp.available = 1
+    </select>
+
+    <select id="findSameToCtb" resultMap="simpleDetailMap">
+        select *
+        from cbs_partner
+        where name = #{ctbEntity.name}
+          and customs_code = #{ctbEntity.customsCode}
+          and inspection_code = #{ctbEntity.inspectionCode}
+          and credit_code = #{ctbEntity.creditCode}
+          and contactor = #{ctbEntity.contactor}
+          and phone = #{ctbEntity.phone}
+          and address = #{ctbEntity.address}
+          and tenant_id = #{tenantId}
+        limit 1
+    </select>
+</mapper>

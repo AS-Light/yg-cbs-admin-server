@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.bind.dao.BindCbsContractCtbProcessingTradeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity"
+               id="bindCbsContractCtbProcessingTradeMap">
+        <result property="id" column="id"/>
+        <result property="fkCbsCompanyId" column="fk_cbs_company_id"/>
+        <result property="fkCtbCompanyId" column="fk_ctb_company_id"/>
+        <result property="fkCbsContractId" column="fk_cbs_contract_id"/>
+        <result property="fkCtbProcessingTradeId" column="fk_ctb_processing_trade_id"/>
+        <result property="isWorkByCtb" column="is_work_by_ctb"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity" id="indexMap"
+               extends="bindCbsContractCtbProcessingTradeMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="cbsContractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_cbs_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.selectByIdWithoutTenant"/>
+        <association property="ctbOrderProcessingTradeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbOrderProcessingTradeEntity"
+                     column="fk_ctb_processing_trade_id"
+                     select="io.renren.modules.ctb.dao.CtbOrderProcessingTradeDao.selectByIdWithoutTenant"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity"
+               extends="bindCbsContractCtbProcessingTradeMap">
+        <association property="cbsContractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_cbs_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.detailWithoutBindAndTenant"/>
+        <association property="ctbOrderProcessingTradeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbOrderProcessingTradeEntity"
+                     column="fk_ctb_processing_trade_id"
+                     select="io.renren.modules.ctb.dao.CtbOrderProcessingTradeDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <resultMap id="detailWithCbsMap" type="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity"
+               extends="bindCbsContractCtbProcessingTradeMap">
+        <association property="cbsContractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_cbs_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <resultMap id="detailWithCtbMap" type="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity"
+               extends="bindCbsContractCtbProcessingTradeMap">
+        <association property="ctbOrderProcessingTradeEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbOrderProcessingTradeEntity"
+                     column="fk_ctb_processing_trade_id"
+                     select="io.renren.modules.ctb.dao.CtbOrderProcessingTradeDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from bind_cbs_contract_ctb_processing_trade
+        where id = #{id}
+    </select>
+
+    <select id="detailWithCbs" resultMap="detailWithCbsMap">
+        select *
+        from bind_cbs_contract_ctb_processing_trade
+        where fk_ctb_processing_trade_id = #{ctbOrderProcessingTradeId}
+    </select>
+
+    <select id="detailWithCtb" resultMap="detailWithCtbMap">
+        select *
+        from bind_cbs_contract_ctb_processing_trade
+        where fk_cbs_contract_id = #{cbsContractId}
+    </select>
+
+</mapper>

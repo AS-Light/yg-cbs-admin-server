@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstDecDao">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="cstDecMap"
+               type="io.renren.modules.cst.entity.CstDecEntity">
+        <result property="id" column="id"/>
+    </resultMap>
+
+    <resultMap id="detailMap"
+               type="io.renren.modules.cst.entity.CstDecEntity"
+               extends="cstDecMap">
+        <association property="decHeaderEntity"
+                     javaType="io.renren.modules.cst.entity.CstDecHeaderEntity"
+                     column="id"
+                     select="io.renren.modules.cst.dao.CstDecHeaderDao.selectById"/>
+        <collection property="decGoodsList"
+                    ofType="io.renren.modules.cst.entity.CstDecListEntity"
+                    column="id"
+                    select="io.renren.modules.cst.dao.CstDecListDao.queryByDecId"/>
+        <collection property="decContainerList"
+                    ofType="io.renren.modules.cst.entity.CstDecContainerEntity"
+                    column="id"
+                    select="io.renren.modules.cst.dao.CstDecContainerDao.queryByDecId"/>
+    </resultMap>
+
+    <select id="detail" resultMap="detailMap">
+        select id
+        from cst_dec_header
+    </select>
+
+    <select id="detailByImportId" resultMap="detailMap">
+        select id
+        from cst_dec_header
+        where i_e_flag = 'I'
+          and fk_order_id = #{importId}
+    </select>
+
+    <select id="detailByExportId" resultMap="detailMap">
+        select id
+        from cst_dec_header
+        where i_e_flag = 'E'
+          and fk_order_id = #{exportId}
+    </select>
+
+    <select id="queryByContractId" resultMap="detailMap">
+        select id
+        from cst_dec_header cdh
+                 left join cbs_import ci on cdh.fk_order_id = ci.id
+                 left join cbs_export ce on cdh.fk_order_id = ce.id
+        where ci.fk_contract_id = #{contractId} or ce.fk_contract_id = #{contractId}
+    </select>
+</mapper>

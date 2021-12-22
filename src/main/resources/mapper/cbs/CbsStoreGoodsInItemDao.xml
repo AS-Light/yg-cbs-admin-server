@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsInItemDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInItemEntity" id="cbsStoreGoodsInItemMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsInId" column="fk_store_goods_in_id"/>
+        <result property="goodsPartNo" column="goods_part_no"/>
+        <result property="goodsInCount" column="goods_in_count"/>
+        <result property="goodsStoreCount" column="goods_store_count"/>
+        <result property="createTime" column="create_time"/>
+        <association property="partNoEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsGoodsPartNoEntity"
+                     column="goods_part_no"
+                     select="io.renren.modules.cbs.dao.CbsGoodsPartNoDao.selectByCode"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="cbsStoreGoodsInItemMap">
+        select *
+        from cbs_store_goods_in_item csgii
+        where csgii.id = #{id}
+    </select>
+
+    <select id="listByStoreInId" resultMap="cbsStoreGoodsInItemMap">
+        select *
+        from cbs_store_goods_in_item csgii
+        where csgii.fk_store_goods_in_id = #{storeInId}
+    </select>
+
+</mapper>

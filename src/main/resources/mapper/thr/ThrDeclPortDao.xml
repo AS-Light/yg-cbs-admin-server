@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrDeclPortDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrDeclPortEntity" id="thrDeclPortMap">
+        <result property="id" column="id"/>
+        <result property="declPort" column="decl_port"/>
+        <result property="name" column="name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <select id="selectByCode" resultMap="thrDeclPortMap">
+        select *
+        from thr_decl_port
+        where decl_port = #{code}
+    </select>
+</mapper>

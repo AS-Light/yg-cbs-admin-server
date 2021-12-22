@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsMoneyOutDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="CbsMoneyOutEntity" id="cbsMoneyOutMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="fkTypeOneselfId" column="fk_type_oneself_id"/>
+        <result property="isBuildOneself" column="is_build_oneself"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="fkAccountId" column="fk_account_id"/>
+        <result property="title" column="title"/>
+        <result property="money" column="money"/>
+        <result property="cny" column="cny"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="operator" column="operator"/>
+        <result property="rmk" column="rmk"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap" type="CbsMoneyOutEntity" extends="cbsMoneyOutMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.simpleDetail"/>
+        <association property="accountEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsAccountEntity"
+                     column="fk_account_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsAccountDao.selectById"/>
+        <association property="typeEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsMoneyTypeEntity"
+                     column="type"
+                     select="io.renren.modules.cbs.dao.CbsMoneyTypeDao.selectByCode"/>
+        <association property="oneselfTypeEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsMoneyTypeOneselfEntity"
+                     column="fk_type_oneself_id"
+                     select="io.renren.modules.cbs.dao.CbsMoneyTypeOneselfDao.selectById"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="operatorEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsUserEntity"
+                     column="operator"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsUserDao.selectById"/>
+        <association property="selfEditingType"
+                     javaType="io.renren.modules.cbs.entity.CbsMoneyTypeOneselfEntity"
+                     column="fk_type_oneself_id"
+                     select="io.renren.modules.cbs.dao.CbsMoneyTypeOneselfDao.selectById"/>
+        <collection property="imgMoneyOutList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgMoneyOutEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgMoneyOutDao.listByMoneyOutId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="simpleDetailMap">
+        SELECT
+        i.`id`,
+        i.`type`,
+        i.`fk_type_oneself_id`,
+        i.`fk_contract_id`,
+        i.`fk_account_id`,
+        i.`title`,
+        i.`money`,
+        i.`cny`,
+        i.`currency_code`,
+        i.`status`,
+        i.`is_build_oneself`,
+        i.`create_time`,
+        i.`update_time`,
+        i.`operator`,
+        i.`rmk`
+        FROM
+        cbs_money_out i
+        -- 类型表
+        <if test="ew.searchForm.financeType != null and ew.searchForm.financeType == 0">
+            LEFT JOIN cbs_money_type mt ON mt.type = i.type
+        </if>
+        <if test="ew.searchForm.financeType != null and ew.searchForm.financeType == 1">
+            LEFT JOIN cbs_money_type_oneself mto ON mto.id = i.fk_type_oneself_id
+        </if>
+        LEFT JOIN cbs_img_money_in imi ON imi.fk_money_in_id = i.id
+        LEFT JOIN cbs_contract c ON c.id = i.fk_contract_id
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        <if test="(ew.searchForm.partNo != null and ew.searchForm.partNo != '') or (ew.searchForm.inOutType != null and ew.searchForm.inOutType != '')">
+            LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+            LEFT JOIN cbs_goods_part_no gpn ON gpn.goods_part_no = cg.id
+            LEFT JOIN cbs_directory_goods dg ON dg.id = gpn.fk_goods_id
+        </if>
+        -- 有公司名称时连接
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            LEFT JOIN cbs_contract_member cm ON cm.fk_contract_id = c.id
+            LEFT JOIN cbs_partner p ON p.id = cm.fk_partner_id
+        </if>
+        WHERE 1=1
+        -- 合同
+        <if test="ew.searchForm.title != null and ew.searchForm.title != ''">
+            AND c.title LIKE concat('%',#{ew.searchForm.title},'%')
+        </if>
+        <if test="ew.searchForm.contractCode != null and ew.searchForm.contractCode != ''">
+            AND c.contract_code LIKE concat('%',#{ew.searchForm.contractCode},'%')
+        </if>
+        -- 票据
+        <if test="ew.searchForm.note != null and ew.searchForm.note == 1">
+            AND imi.id IS NOT NULL
+        </if>
+        -- 类型
+        <if test="ew.searchForm.financeType != null and ew.searchForm.financeType == 0">
+            AND mt.type = #{ew.searchForm.financeTypeId}
+        </if>
+        <if test="ew.searchForm.financeType != null and ew.searchForm.financeType == 1">
+            AND mto.id = #{ew.searchForm.financeTypeId}
+        </if>
+        -- 本表
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND i.money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND i.money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.searchForm.currencyCode != null and ew.searchForm.currencyCode != ''">
+            AND i.currency_code = #{ew.searchForm.currencyCode}
+        </if>
+        <if test="ew.searchForm.status != null">
+            AND i.`status` = #{ew.searchForm.status}
+        </if>
+        <if test="ew.id != null and ew.id != ''">
+            and i.id = #{ew.id}
+        </if>
+        <if test="ew.startDate != null and ew.startDate != ''">
+            and i.create_time >= #{ew.startDate}
+        </if>
+        <if test="ew.endDate != null and ew.endDate != ''">
+            and i.create_time &lt;= #{ew.endDate}
+        </if>
+        GROUP BY
+        i.id
+        ORDER BY
+        i.id DESC
+    </select>
+
+    <select id="simpleDetailById" resultMap="simpleDetailMap">
+        select *
+        from cbs_money_out
+        where id = #{id}
+    </select>
+
+</mapper>

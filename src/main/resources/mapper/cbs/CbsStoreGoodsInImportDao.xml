@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsInImportDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInImportEntity" id="cbsStoreGoodsInImportMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsInId" column="fk_store_goods_in_id"/>
+        <result property="fkImportId" column="fk_import_id"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInImportEntity" id="simpleDetailMap" extends="cbsStoreGoodsInImportMap">
+        <association property="goodsInEntity"
+                     javaType="CbsStoreGoodsInEntity"
+                     column="fk_store_goods_in_id"
+                     select="io.renren.modules.cbs.dao.CbsStoreGoodsInDao.detail"/>
+    </resultMap>
+
+    <select resultMap="simpleDetailMap" id="selectByImportId">
+        select csgiim.*
+        from cbs_store_goods_in_import csgiim
+        where csgiim.fk_import_id = #{importId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="selectByStoreInId">
+        select csgiim.*
+        from cbs_store_goods_in_import csgiim
+        where csgiim.fk_store_goods_in_id = #{storeInId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="listByContract">
+        select csgiim.*
+        from cbs_store_goods_in_import csgiim
+            left join cbs_import ci on ci.id = csgiim.fk_import_id
+        where ci.id = #{importId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="listByOutToProduceId">
+        select csgiim.*
+        from cbs_store_goods_in_import csgiim
+                 right join cbs_import ci on ci.id = csgiim.fk_import_id
+                 right join cbs_contract cc on cc.id = ci.fk_contract_id
+                 left join cbs.cbs_produce cp on cp.fk_contract_id = cc.id
+        where cp.id = #{produceId}
+    </select>
+
+</mapper>

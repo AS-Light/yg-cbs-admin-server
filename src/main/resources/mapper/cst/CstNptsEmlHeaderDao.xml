@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsEmlHeaderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsEmlHeaderEntity" id="cstNptsEmlHeaderMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="emlNo" column="eml_no"/>
+        <result property="emlType" column="eml_type"/>
+        <result property="etpsPreentNo" column="etps_preent_no"/>
+        <result property="dclTypecd" column="dcl_typecd"/>
+        <result property="masterCuscd" column="master_cuscd"/>
+        <result property="bizopEtpsSccd" column="bizop_etps_sccd"/>
+        <result property="bizopEtpsno" column="bizop_etpsno"/>
+        <result property="bizopEtpsNm" column="bizop_etps_nm"/>
+        <result property="rvsngdEtpsSccd" column="rvsngd_etps_sccd"/>
+        <result property="rcvgdEtpsno" column="rcvgd_etpsno"/>
+        <result property="rcvgdEtpsNm" column="rcvgd_etps_nm"/>
+        <result property="rcvgdEtpsDtcd" column="rcvgd_etps_dtcd"/>
+        <result property="dclEtpsTypecd" column="dcl_etps_typecd"/>
+        <result property="dclEtpsSccd" column="dcl_etps_sccd"/>
+        <result property="dclEtpsno" column="dcl_etpsno"/>
+        <result property="dclEtpsNm" column="dcl_etps_nm"/>
+        <result property="dclTime" column="dcl_time"/>
+        <result property="supvModecd" column="supv_modecd"/>
+        <result property="apcretNo" column="apcret_no"/>
+        <result property="impCtrtNo" column="imp_ctrt_no"/>
+        <result property="expCtrtNo" column="exp_ctrt_no"/>
+        <result property="validDate" column="valid_date"/>
+        <result property="reduNatrcd" column="redu_natrcd"/>
+        <result property="produceTypecd" column="produce_typecd"/>
+        <result property="impexpPortcd" column="impexp_portcd"/>
+        <result property="ucnsDclSegcd" column="ucns_dcl_segcd"/>
+        <result property="stndbkBankcd" column="stndbk_bankcd"/>
+        <result property="productRatio" column="product_ratio"/>
+        <result property="impCurrcd" column="imp_currcd"/>
+        <result property="expCurrcd" column="exp_currcd"/>
+        <result property="dclTypeMarkcd" column="dcl_type_markcd"/>
+        <result property="pauseImpexpMarkcd" column="pause_impexp_markcd"/>
+        <result property="inputEtpsNm" column="input_etps_nm"/>
+        <result property="inputEtpsSccd" column="input_etps_sccd"/>
+        <result property="inputEtpsTypecd" column="input_etps_typecd"/>
+        <result property="rmk" column="rmk"/>
+        <result property="inputTime" column="input_time"/>
+        <result property="linkMan" column="link_man"/>
+        <result property="linkManTel" column="link_man_tel"/>
+    </resultMap>
+
+
+</mapper>

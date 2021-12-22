@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbImgOrderProcessingTradeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbImgOrderProcessingTradeEntity" id="ctbImgOrderProcessingTradeMap">
+        <result property="id" column="id"/>
+        <result property="fkOrderProcessingTradeId" column="fk_order_processing_trade_id"/>
+        <result property="type" column="type"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="sort" column="sort"/>
+        <result property="isValid" column="is_valid"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="queryByOrderProcessingTradeId" resultMap="ctbImgOrderProcessingTradeMap">
+        select *
+        from ctb_img_order_processing_trade
+        where fk_order_processing_trade_id = #{orderProcessingTradeId}
+    </select>
+
+    <delete id="deleteOrderByIdWithoutTenant" parameterType="Long">
+        delete
+        from ctb_img_order_processing_trade
+        where fk_order_processing_trade_id = #{orderId}
+    </delete>
+</mapper>

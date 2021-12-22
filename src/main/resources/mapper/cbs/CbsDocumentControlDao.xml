@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsDocumentControlDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsDocumentControlEntity" id="cbsDocumentControlMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="businessTable" column="business_table"/>
+        <result property="businessId" column="business_id"/>
+        <result property="businessFile" column="business_file"/>
+        <result property="createTime" column="create_time"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <select id="selectBusinessIds" resultType="java.lang.Long">
+        SELECT
+            id
+        FROM
+            ${ew.tableName}
+        WHERE
+            ${ew.field} = #{ew.fieldValue}
+    </select>
+
+    <delete id="deleteAnnexByBusinessId">
+        DELETE
+        FROM
+        ${ew.tableName}
+        WHERE
+        ${ew.field} = #{ew.fieldValue}
+    </delete>
+
+    <delete id="deleteDCByBusinessIds">
+        DELETE
+        FROM
+        cbs_document_control
+        WHERE
+        business_table = #{ew.tableName}
+        AND business_id IN
+        <foreach item="item" index="index" collection="ew.idList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertAnnex" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ${ew.tableName}
+        (${ew.field},img_url)
+        VALUES
+        (#{ew.fieldValue},#{ew.img})
+    </insert>
+
+    <insert id="insertDC">
+        INSERT INTO cbs_document_control
+        (fk_contract_id,business_table,business_id,business_file)
+        VALUES
+        (#{ew.contractId},#{ew.tableName},#{ew.id},#{ew.img})
+    </insert>
+
+    <select id="queryIndex" resultType="CbsDocumentControlEntity">
+        SELECT
+        c.title,
+        c.contract_code,
+        dc.business_table,
+        dc.business_id,
+        dc.business_file,
+        dc.create_time
+        FROM
+        cbs_document_control dc
+        LEFT JOIN cbs_contract c ON c.id = dc.fk_contract_id
+        WHERE
+        1 = 1
+        -- 合同
+        <if test="ew.title != null and ew.title != ''">
+            AND c.title LIKE concat('%',#{ew.title},'%')
+        </if>
+        <if test="ew.contractCode != null and ew.contractCode != ''">
+            AND c.contract_code LIKE concat('%',#{ew.contractCode},'%')
+        </if>
+        -- 本表
+        <if test="ew.businessTable != null and ew.businessTable != ''">
+            AND dc.business_table = #{ew.businessTable}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(dc.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(dc.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+        ORDER BY
+        dc.create_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsEmlConsumeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsEmlConsumeEntity" id="cstNptsEmlConsumeMap">
+        <result property="id" column="id"/>
+        <result property="fkEmlHeaderId" column="fk_eml_header_id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="endprdSeqno" column="endprd_seqno"/>
+        <result property="endprdGdsMtno" column="endprd_gds_mtno"/>
+        <result property="mtpckSeqno" column="mtpck_seqno"/>
+        <result property="mtpckGdsMtno" column="mtpck_gds_mtno"/>
+        <result property="ucnsVerno" column="ucns_verno"/>
+        <result property="ucnsQty" column="ucns_qty"/>
+        <result property="netUseupQty" column="net_useup_qty"/>
+        <result property="tgblLossRate" column="tgbl_loss_rate"/>
+        <result property="intgbLossRate" column="intgb_loss_rate"/>
+        <result property="ucnsDclStucd" column="ucns_dcl_stucd"/>
+        <result property="modfMarkcd" column="modf_markcd"/>
+        <result property="bondMtpckPrpr" column="bond_mtpck_prpr"/>
+        <result property="etpsExeMarkcd" column="etps_exe_markcd"/>
+        <result property="rmk" column="rmk"/>
+        <result property="gseqNo" column="gseq_no"/>
+        <result property="endprdGdecd" column="endprd_gdecd"/>
+        <result property="endprdGdsNm" column="endprd_gds_nm"/>
+        <result property="mtpckGdecd" column="mtpck_gdecd"/>
+        <result property="mtpckGdsNm" column="mtpck_gds_nm"/>
+    </resultMap>
+
+    <select id="queryByNptsEmlId" resultMap="cstNptsEmlConsumeMap">
+        select *
+        from cst_npts_eml_consume
+        where fk_eml_header_id = #{nptsEmlId}
+        order by gseq_no
+    </select>
+</mapper>

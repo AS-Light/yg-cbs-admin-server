@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EmlMessage>
+    <NptsEmlHead>
+        <InputEtpsSccd>录入单位统一社会信用代码2</InputEtpsSccd>
+        <InputEtpsTypecd>录入单位编码1</InputEtpsTypecd>
+    </NptsEmlHead>
+    <NptsEmlImg>
+        <DclCurrcd>第一个料件</DclCurrcd>
+    </NptsEmlImg>
+    <NptsEmlImg>
+        <DclCurrcd>第二个料件</DclCurrcd>
+    </NptsEmlImg>
+    <NptsEmlExg>
+        <DclCurrcd>成品</DclCurrcd>
+    </NptsEmlExg>
+    <NptsEmlConsume>
+        <EndprdGdecd>损耗</EndprdGdecd>
+    </NptsEmlConsume>
+    <NptsSign></NptsSign>
+    <OperCusRegCode>录入单位编码1</OperCusRegCode>
+    <ImportInfo>
+        <MessageType>NPTS001</MessageType>
+        <OpType>5</OpType>
+        <HostId></HostId>
+        <FileSize>0</FileSize>
+        <Sign></Sign>
+    </ImportInfo>
+</EmlMessage>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsContractMemberDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsContractMemberEntity" id="cbsContractMemberMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="fkPartnerId" column="fk_partner_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.cbs.entity.CbsContractMemberEntity"
+               extends="cbsContractMemberMap">
+        <association property="partnerEntity"
+                     column="fk_partner_id"
+                     javaType="io.renren.modules.cbs.entity.CbsPartnerEntity"
+                     select="io.renren.modules.cbs.dao.CbsPartnerDao.simpleDetail"/>
+    </resultMap>
+
+    <select id="listByContractId" resultMap="simpleDetailMap">
+        select *
+        from cbs_contract_member
+        where fk_contract_id = #{contractId}
+    </select>
+
+    <select id="detail" resultMap="simpleDetailMap">
+        select *
+        from cbs_contract_member
+        where id = #{id}
+    </select>
+</mapper>

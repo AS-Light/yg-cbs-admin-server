@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbStoreGoodsOutDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbStoreGoodsOutEntity" id="ctbStoreGoodsOutMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="fkTransitCompanyId" column="fk_transit_company_id"/>
+        <result property="wagonNumber" column="wagon_number"/>
+        <result property="createTime" column="create_time"/>
+        <result property="departTime" column="depart_time"/>
+        <result property="arrivalTime" column="arrival_time"/>
+        <result property="deleteNote" column="delete_note"/>
+        <result property="examineTime" column="examine_time"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="operator" column="operator"/>
+        <result property="startAddress" column="start_address"/>
+        <result property="startContact" column="start_contact"/>
+        <result property="startPhone" column="start_phone"/>
+        <result property="endAddress" column="end_address"/>
+        <result property="endContact" column="end_contact"/>
+        <result property="endPhone" column="end_phone"/>
+        <result property="transFeeMoney" column="trans_fee_money"/>
+        <result property="status" column="status"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbStoreGoodsOutEntity" extends="ctbStoreGoodsOutMap" id="indexMap">
+        <association property="serviceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectById"/>
+        <association property="transitCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryTransitCompanyEntity"
+                     column="fk_transit_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryTransitCompanyDao.selectById"/>
+        <collection property="storeGoodsOutItemEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbStoreGoodsOutItemEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbStoreGoodsOutItemDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutDeliveryOrderEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgStoreGoodsOutDeliveryOrderEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgStoreGoodsOutDeliveryOrderDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutReceiptEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgStoreGoodsOutReceiptEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgStoreGoodsOutReceiptDao.listByStoreOutId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbStoreGoodsOutEntity" id="detailMap" extends="ctbStoreGoodsOutMap">
+        <association property="serviceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectById"/>
+        <association property="transitCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryTransitCompanyEntity"
+                     column="fk_transit_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryTransitCompanyDao.selectById"/>
+        <collection property="storeGoodsOutItemEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbStoreGoodsOutItemEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbStoreGoodsOutItemDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutDeliveryOrderEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgStoreGoodsOutDeliveryOrderEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgStoreGoodsOutDeliveryOrderDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutReceiptEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgStoreGoodsOutReceiptEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgStoreGoodsOutReceiptDao.listByStoreOutId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+        SELECT
+        a.*
+        FROM
+        (
+        SELECT
+        csgo.*
+        FROM
+        ctb_store_goods_out csgo
+        ) a
+        WHERE
+        1=1
+        <if test="ew.searchForm.fkServiceCompanyId != null and ew.searchForm.fkServiceCompanyId != ''">
+            AND a.`fk_service_company_id` = #{ew.searchForm.fkServiceCompanyId}
+        </if>
+        <if test="ew.searchForm.status != null and ew.searchForm.status != ''">
+            AND a.`status` = #{ew.searchForm.status}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(a.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(a.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select csgo.*
+        from ctb_store_goods_out csgo
+        where csgo.id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.bind.dao.BindCbsCustomsBrokerCtbCompanyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+               id="bindCbsCustomsBrokerCtbCompanyMap">
+        <result property="id" column="id"/>
+        <result property="fkCbsCompanyId" column="fk_cbs_company_id"/>
+        <result property="fkCtbCompanyId" column="fk_ctb_company_id"/>
+        <result property="fkCbsCustomBrokerId" column="fk_cbs_custom_broker_id"/>
+        <result property="fkCtbServiceCompanyId" column="fk_ctb_service_company_id"/>
+        <result property="fkCtbServiceContractId" column="fk_ctb_service_contract_id"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity" id="indexMap"
+               extends="bindCbsCustomsBrokerCtbCompanyMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="cbsCustomsBrokerEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryCustomsBrokerEntity"
+                     column="fk_cbs_custom_broker_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryCustomsBrokerDao.selectById"/>
+        <association property="ctbServiceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_ctb_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectByIdWithoutTenant"/>
+        <association property="ctbServiceContractEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+                     column="fk_ctb_service_contract_id"
+                     select="io.renren.modules.ctb.dao.CtbServiceContractDao.selectById"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+               extends="bindCbsCustomsBrokerCtbCompanyMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="cbsCustomsBrokerEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryCustomsBrokerEntity"
+                     column="fk_cbs_custom_broker_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryCustomsBrokerDao.selectById"/>
+        <association property="ctbServiceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_ctb_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectByIdWithoutTenant"/>
+        <association property="ctbServiceContractEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+                     column="fk_ctb_service_contract_id"
+                     select="io.renren.modules.ctb.dao.CtbServiceContractDao.detail"/>
+    </resultMap>
+
+    <resultMap id="detailWithCbsMap" type="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+               extends="bindCbsCustomsBrokerCtbCompanyMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbServiceContractEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+                     column="fk_ctb_service_contract_id"
+                     select="io.renren.modules.ctb.dao.CtbServiceContractDao.detail"/>
+    </resultMap>
+
+    <resultMap id="detailWithCtbMap" type="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+               extends="bindCbsCustomsBrokerCtbCompanyMap">
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="ctbServiceContractEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+                     column="fk_ctb_service_contract_id"
+                     select="io.renren.modules.ctb.dao.CtbServiceContractDao.detail"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company
+        where id = #{id}
+    </select>
+
+    <select id="detailWithCbs" resultMap="detailWithCbsMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company
+        where id = #{id}
+    </select>
+
+    <select id="detailWithCtb" resultMap="detailWithCtbMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company
+        where id = #{id}
+    </select>
+
+    <select id="detailByBothId" resultMap="detailMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company as bccbcc
+        where fk_cbs_company_id = #{cbsCompanyId}
+          and fk_ctb_company_id = #{ctbCompanyId}
+    </select>
+
+    <select id="detailWithCbsByCtbDirectoryId" resultMap="detailWithCbsMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company
+        where fk_ctb_service_company_id = #{ctbDirectoryId}
+    </select>
+
+    <select id="detailWithCtbByCbsDirectoryId" resultMap="detailWithCtbMap">
+        select *
+        from bind_cbs_customs_broker_ctb_company
+        where fk_cbs_custom_broker_id = #{cbsDirectoryId}
+    </select>
+
+</mapper>

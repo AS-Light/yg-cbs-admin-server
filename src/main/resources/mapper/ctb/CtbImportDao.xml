@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbImportDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" id="ctbImportMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="departTime" column="depart_time"/>
+        <result property="expectedArrivalTime" column="expected_arrival_time"/>
+        <result property="arrivalTime" column="arrival_time"/>
+        <result property="fromCountryCode" column="from_country_code"/>
+        <result property="fromPortCode" column="from_port_code"/>
+        <result property="toCountryCode" column="to_country_code"/>
+        <result property="toPortCode" column="to_port_code"/>
+        <result property="passPortCode" column="pass_port_code"/>
+        <result property="invoiceCode" column="invoice_code"/>
+        <result property="entryBillCode" column="entry_bill_code"/>
+        <result property="invoiceMoney" column="invoice_money"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="freightMoney" column="freight_money"/>
+        <result property="freightCurrencyCode" column="freight_currency_code"/>
+        <result property="premiumMoney" column="premium_money"/>
+        <result property="premiumCurrencyCode" column="premium_currency_code"/>
+        <result property="incidentalMoney" column="incidental_money"/>
+        <result property="incidentalCurrencyCode" column="incidental_currency_code"/>
+        <result property="hasDeliveryCode" column="has_delivery_code"/>
+        <result property="deliveryCode" column="delivery_code"/>
+        <result property="sealNo" column="seal_no"/>
+        <result property="entryBillCreateTime" column="entry_bill_create_time"/>
+        <result property="entryBillPassTime" column="entry_bill_pass_time"/>
+        <result property="status" column="status"/>
+        <result property="operator" column="operator"/>
+        <result property="manager" column="manager"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" extends="ctbImportMap" id="simpleDetailMap">
+        <association property="serviceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectById"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="managerEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbUserEntity"
+                     column="manager"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbUserDao.selectById"/>
+        <collection property="memberEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImportMemberEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImportMemberDao.listByImportId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" extends="simpleDetailMap"
+               id="simpleDetailWithBindMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCtbImportEntity"
+                     column="id"
+                     select="io.renren.modules.bind.dao.BindCbsCtbImportDao.detailWithCbs"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" id="simpleDetailWithGoodsItemsMap"
+               extends="simpleDetailWithBindMap">
+        <collection property="importGoodsList"
+                    ofType="io.renren.modules.ctb.entity.CtbImportGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImportGoodsDao.listByImportId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" id="detailMap"
+               extends="simpleDetailMap">
+        <association property="fromCountry"
+                     javaType="io.renren.modules.thr.entity.ThrCountryCodeEntity"
+                     column="from_country_code"
+                     select="io.renren.modules.thr.dao.ThrCountryCodeDao.selectByCode"/>
+        <association property="fromPort"
+                     javaType="io.renren.modules.thr.entity.ThrPortEntity"
+                     column="from_port_code"
+                     select="io.renren.modules.thr.dao.ThrPortDao.selectByCode"/>
+        <association property="toCountry"
+                     javaType="io.renren.modules.thr.entity.ThrCountryCodeEntity"
+                     column="to_country_code"
+                     select="io.renren.modules.thr.dao.ThrCountryCodeDao.selectByCode"/>
+        <association property="toPort"
+                     javaType="io.renren.modules.thr.entity.ThrDeclPortEntity"
+                     column="to_port_code"
+                     select="io.renren.modules.thr.dao.ThrDeclPortDao.selectByCode"/>
+        <association property="passPort"
+                     javaType="io.renren.modules.thr.entity.ThrPortEntity"
+                     column="pass_port_code"
+                     select="io.renren.modules.thr.dao.ThrPortDao.selectByCode"/>
+        <association property="freightCurrency"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="freight_currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="premiumCurrency"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="premium_currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <association property="incidentalCurrency"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="incidental_currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <collection property="voyageList"
+                    ofType="io.renren.modules.ctb.entity.CtbImportVoyageEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImportVoyageDao.listByImportId"/>
+        <collection property="importGoodsList"
+                    ofType="io.renren.modules.ctb.entity.CtbImportGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImportGoodsDao.listByImportId"/>
+        <collection property="imgImportContractList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportContractEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportContractDao.listByImportId"/>
+        <collection property="imgImportContractShipList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportContractShipEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportContractShipDao.listByImportId"/>
+        <collection property="imgImportDeliveryOrderList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportDeliveryOrderEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportDeliveryOrderDao.listByImportId"/>
+        <collection property="imgImportEntryBillList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportEntryBillEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportEntryBillDao.listByImportId"/>
+        <collection property="imgImportInvoiceList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportInvoiceEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportInvoiceDao.listByImportId"/>
+        <collection property="imgImportLadingBillList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportLadingBillEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportLadingBillDao.listByImportId"/>
+        <collection property="imgImportOthersList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportOthersEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportOthersDao.listByImportId"/>
+        <collection property="imgImportPackingListList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportPackingListEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportPackingListDao.listByImportId"/>
+        <collection property="imgImportPayInAdvanceList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportPayInAdvanceEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportPayInAdvanceDao.listByImportId"/>
+        <collection property="imgImportPayTailList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportPayTailEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportPayTailDao.listByImportId"/>
+        <collection property="imgImportPowerOfAttorneyList"
+                    ofType="io.renren.modules.ctb.entity.CtbImgImportPowerOfAttorneyEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImgImportPowerOfAttorneyDao.listByImportId"/>
+        <collection property="importPriceItemEntityList"
+                    ofType="io.renren.modules.ctb.entity.CtbImportPriceItemEntity"
+                    column="id"
+                    select="io.renren.modules.ctb.dao.CtbImportPriceItemDao.listByImportId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbImportEntity" id="detailWithBindMap"
+               extends="detailMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCtbImportEntity"
+                     column="id"
+                     select="io.renren.modules.bind.dao.BindCbsCtbImportDao.detailWithCbs"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="simpleDetailWithGoodsItemsMap">
+        SELECT
+        i.*,
+        cdsc.name AS serviceCompanyName
+        FROM
+        ctb_import i
+        LEFT JOIN ctb_directory_service_company cdsc ON cdsc.id = i.fk_service_company_id
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        <if test="ew.searchForm.inOutType != null and ew.searchForm.goodsName != null and ew.searchForm.goodsName != ''">
+            LEFT JOIN ctb_import_goods ig ON ig.fk_import_id = i.id
+            LEFT JOIN ctb_goods_part_no gpn ON gpn.goods_part_no = ig.goods_part_no
+            LEFT JOIN ctb_directory_goods dg ON dg.id = gpn.fk_goods_id
+        </if>
+        -- 有公司名称时连接
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            LEFT JOIN ctb_import_member cm ON cm.fk_import_id = i.id
+            LEFT JOIN ctb_partner p ON p.id = cm.fk_partner_id
+        </if>
+        WHERE 1=1
+        -- 委托企业
+        <if test="ew.searchForm.fkServiceCompanyId != null">
+            AND i.`fk_service_company_id` = #{ew.searchForm.fkServiceCompanyId}
+        </if>
+        -- 料号
+        <if test="ew.searchForm.partNo != null and ew.searchForm.partNo != ''">
+            AND gpn.goods_part_no = #{ew.searchForm.partNo}
+        </if>
+        -- 负责人
+        <if test="ew.searchForm.manager != null and ew.searchForm.manager &gt;= 0">
+            AND i.manager = #{ew.searchForm.manager}
+        </if>
+        <if test="ew.searchForm.manager != null and ew.searchForm.manager &lt; 0">
+            AND i.manager is null
+        </if>
+        -- 进出口类型和商品名称
+        <if test="ew.searchForm.inOutType != null and ew.searchForm.goodsName != null and ew.searchForm.goodsName != ''">
+            AND dg.`name` LIKE concat('%',#{ew.searchForm.goodsName},'%')
+        </if>
+        -- 公司
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            AND p.`name` LIKE concat('%',#{ew.searchForm.companyName},'%')
+        </if>
+        -- 本表
+        <if test="ew.id != null">
+            AND i.id = #{ew.id}
+        </if>
+        <if test="ew.title != null and ew.title != ''">
+            AND i.`title` LIKE concat('%',#{ew.title},'%')
+        </if>
+        <if test="ew.status != null and ew.status != ''">
+            AND i.`status` = #{ew.status}
+        </if>
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND i.invoice_money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND i.invoice_money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.searchForm.departTime != null and ew.searchForm.departTime != ''">
+            AND DATE_FORMAT(i.depart_time, '%Y-%m-%d') = #{ew.searchForm.departTime}
+        </if>
+        <if test="ew.searchForm.arrivalTime != null and ew.searchForm.arrivalTime != ''">
+            AND DATE_FORMAT(i.arrival_time, '%Y-%m-%d') = #{ew.searchForm.arrivalTime}
+        </if>
+        GROUP BY
+        i.id
+        ORDER BY
+        i.create_time DESC
+    </select>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbImportEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_import(fk_service_company_id, title, description, expected_arrival_time,
+                               arrival_time, from_country_code, from_port_code, to_country_code, to_port_code,
+                               pass_port_code, invoice_code, entry_bill_code, invoice_money, currency_code,
+                               freight_money, freight_currency_code, premium_money, premium_currency_code,
+                               incidental_money, incidental_currency_code, manager, ctb_tenant_id)
+        values (#{fkServiceCompanyId}, #{title}, #{description}, #{expectedArrivalTime}, #{arrivalTime},
+                #{fromCountryCode}, #{fromPortCode}, #{toCountryCode}, #{toPortCode}, #{passPortCode}, #{invoiceCode},
+                #{entryBillCode}, #{invoiceMoney}, #{currencyCode}, #{freightMoney}, #{freightCurrencyCode},
+                #{premiumMoney}, #{premiumCurrencyCode}, #{incidentalMoney}, #{incidentalCurrencyCode}, #{manager},
+                #{ctbTenantId})
+    </insert>
+
+    <update id="updateByIdWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbImportEntity">
+        update ctb_import
+        <trim prefix="set" suffixOverrides=",">
+            <if test="fromCountryCode!=null">from_country_code=#{fromCountryCode},</if>
+            <if test="fromPortCode!=null">from_port_code=#{fromPortCode},</if>
+            <if test="toCountryCode!=null">to_country_code=#{toCountryCode},</if>
+            <if test="toPortCode!=null">to_port_code=#{toPortCode},</if>
+            <if test="passPortCode!=null">pass_port_code=#{passPortCode},</if>
+            <if test="departTime!=null">depart_time=#{departTime},</if>
+            <if test="expectedArrivalTime!=null">expected_arrival_time=#{expectedArrivalTime},</if>
+            <if test="arrivalTime!=null">arrival_time=#{arrivalTime},</if>
+            <if test="freightMoney!=null">freight_money=#{freightMoney},</if>
+            <if test="currencyCode!=null">currency_code=#{currencyCode},</if>
+            <if test="freightCurrencyCode!=null">freight_currency_code=#{freightCurrencyCode},</if>
+            <if test="premiumMoney!=null">premium_money=#{premiumMoney},</if>
+            <if test="premiumCurrencyCode!=null">premium_currency_code=#{premiumCurrencyCode},</if>
+            <if test="incidentalMoney!=null">incidental_money=#{incidentalMoney},</if>
+            <if test="incidentalCurrencyCode!=null">incidental_currency_code=#{incidentalCurrencyCode},</if>
+            <if test="customsFeeMoney!=null">customs_fee_money=#{customsFeeMoney},</if>
+            <if test="invoiceCode!=null">invoice_code=#{invoiceCode},</if>
+            <if test="sealNo!=null">seal_no=#{sealNo},</if>
+            <if test="deliveryCode!=null">delivery_code=#{deliveryCode},</if>
+            <if test="entryBillCode!=null">entry_bill_code=#{entryBillCode},</if>
+            <if test="sealNo!=null">seal_no=#{sealNo},</if>
+            <if test="invoiceMoney!=null">invoice_money=#{invoiceMoney},</if>
+            <if test="entryBillCreateTime!=null">entry_bill_create_time=#{entryBillCreateTime},</if>
+            <if test="entryBillPassTime!=null">entry_bill_pass_time=#{entryBillPassTime},</if>
+            <if test="status!=null">status=#{status},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from ctb_import
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailWithGoodsItems" resultMap="simpleDetailWithGoodsItemsMap">
+        select *
+        from ctb_import
+        where id = #{id}
+    </select>
+
+    <select id="detail" resultMap="detailWithBindMap">
+        select *
+        from ctb_import
+        where id = #{id}
+    </select>
+
+    <select id="detailWithoutBindAndTenant" resultMap="detailMap">
+        select *
+        from ctb_import
+        where id = #{id}
+    </select>
+
+</mapper>

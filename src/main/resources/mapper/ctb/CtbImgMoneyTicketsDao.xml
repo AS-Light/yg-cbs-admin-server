@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbImgMoneyTicketsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbImgMoneyTicketsEntity" id="ctbImgMoneyTicketsMap">
+        <result property="id" column="id"/>
+        <result property="fkMoneyTicketsId" column="fk_money_tickets_id"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="sort" column="sort"/>
+        <result property="isValid" column="is_valid"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    <select id="listByMoneyTicketsId" resultMap="ctbImgMoneyTicketsMap">
+        select *
+        from ctb_img_money_tickets
+        where fk_money_tickets_id = #{moneyTicketsId}
+    </select>
+
+
+</mapper>

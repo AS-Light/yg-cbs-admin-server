@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbServiceContractDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbServiceContractEntity" id="ctbServiceContractMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="partA" column="part_a"/>
+        <result property="partAManager" column="part_a_manager"/>
+        <result property="partAAddress" column="part_a_address"/>
+        <result property="partAPhone" column="part_a_phone"/>
+        <result property="partAEmail" column="part_a_email"/>
+        <result property="partB" column="part_b"/>
+        <result property="partBManager" column="part_b_manager"/>
+        <result property="partBAddress" column="part_b_address"/>
+        <result property="partBPhone" column="part_b_phone"/>
+        <result property="partBAccount" column="part_b_account"/>
+        <result property="payDayPermonth" column="pay_day_permonth"/>
+        <result property="pdf" column="pdf"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+               extends="ctbServiceContractMap">
+        <association property="priceListEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbPriceListEntity"
+                     column="id"
+                     select="io.renren.modules.ctb.dao.CtbPriceListDao.detailByContractId"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbServiceContractEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_service_contract(code, part_a, part_a_manager, part_a_address, part_a_phone, part_a_email,
+                                         part_b, part_b_manager, part_b_address, part_b_phone, part_b_account,
+                                         pay_day_permonth, pdf, ctb_tenant_id)
+        values (#{code}, #{partA}, #{partAManager}, #{partAAddress}, #{partAPhone}, #{partAEmail}, #{partB},
+                #{partBManager}, #{partBAddress}, #{partBPhone}, #{partBAccount}, #{payDayPermonth}, #{pdf},
+                #{ctbTenantId})
+    </insert>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from ctb_service_contract
+        where id = #{id}
+    </select>
+</mapper>

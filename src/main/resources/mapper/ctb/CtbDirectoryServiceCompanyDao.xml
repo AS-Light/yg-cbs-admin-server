@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity" id="ctbDirectoryServiceCompanyMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="customsCode" column="customs_code"/>
+        <result property="inspectionCode" column="inspection_code"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="aeoCode" column="aeo_code"/>
+        <result property="contactor" column="contactor"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ctb_directory_service_company (`name`,
+                                                   `customs_code`,
+                                                   `inspection_code`,
+                                                   `credit_code`,
+                                                   `aeo_code`,
+                                                   `contactor`,
+                                                   `phone`,
+                                                   `address`,
+                                                   `create_time`,
+                                                   `create_user_id`,
+                                                   `ctb_tenant_id`,
+                                                   need_syn)
+        VALUES (#{name},
+                #{customsCode},
+                #{inspectionCode},
+                #{creditCode},
+                #{aeoCode},
+                #{contactor},
+                #{phone},
+                #{address},
+                NOW(),
+                #{createUserId},
+                #{ctbTenantId},
+                1)
+    </insert>
+
+    <select id="selectByIdWithoutTenant" resultMap="ctbDirectoryServiceCompanyMap">
+        select *
+        from ctb_directory_service_company
+        where id = #{id}
+    </select>
+
+    <select id="selfEditingList" resultType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity">
+        SELECT a.*
+        FROM ctb_directory_service_company a
+                 LEFT JOIN bind_cbs_customs_broker_ctb_company b ON b.fk_ctb_service_company_id = a.id
+        WHERE a.available = 1
+          AND b.id IS NULL
+    </select>
+
+
+</mapper>

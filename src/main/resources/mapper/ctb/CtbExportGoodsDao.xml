@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbExportGoodsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbExportGoodsEntity" id="ctbExportGoodsMap">
+        <result property="id" column="id"/>
+        <result property="fkExportId" column="fk_export_id"/>
+        <result property="goodsPartNo" column="goods_part_no"/>
+        <result property="count" column="count"/>
+        <result property="storeOutCount" column="store_out_count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap" type="io.renren.modules.ctb.entity.CtbExportGoodsEntity"
+               extends="ctbExportGoodsMap">
+        <association property="partNoEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity"
+                     column="goods_part_no"
+                     select="io.renren.modules.ctb.dao.CtbGoodsPartNoDao.selectByCode"/>
+    </resultMap>
+
+    <select id="listByExportId" resultMap="simpleDetailMap">
+        select *
+        from ctb_export_goods
+        where fk_export_id = #{exportId}
+    </select>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from ctb_export_goods
+        where id = #{id}
+    </select>
+
+    <select id="listIdsByExportIds" resultType="java.lang.Long">
+        select id
+        from ctb_export_goods
+        where fk_export_id in
+        <foreach collection="exportIds" item="exportId" index="index" open="(" separator="," close=")">
+            #{exportId}
+        </foreach>
+    </select>
+</mapper>

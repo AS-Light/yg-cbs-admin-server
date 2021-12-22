@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsInPurchaseDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInPurchaseEntity" id="cbsStoreGoodsInPurchaseMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsInId" column="fk_store_goods_in_id"/>
+        <result property="fkPurchaseId" column="fk_purhcase_id"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsInPurchaseEntity" id="simpleDetailMap" extends="cbsStoreGoodsInPurchaseMap">
+        <association property="goodsInEntity"
+                     javaType="CbsStoreGoodsInEntity"
+                     column="fk_store_goods_in_id"
+                     select="io.renren.modules.cbs.dao.CbsStoreGoodsInDao.detail"/>
+    </resultMap>
+
+    <select resultMap="simpleDetailMap" id="selectByPurchaseId">
+        select csgiip.*
+        from cbs_store_goods_in_purchase csgiip
+        where csgiip.fk_purchase_id = #{purchaseId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="selectByStoreInId">
+        select csgiip.*
+        from cbs_store_goods_in_purchase csgiip
+        where csgiip.fk_store_goods_in_id = #{storeInId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="listByContract">
+        select csgiip.*
+        from cbs_store_goods_in_purchase csgiip
+            left join cbs_purchase cp on cp.id = csgiip.fk_purchase_id
+        where cp.id = #{purchaseId}
+    </select>
+
+    <select resultMap="simpleDetailMap" id="listByOutToProduceId">
+        select csgiip.*
+        from cbs_store_goods_in_purchase csgiip
+                 right join cbs_purchase cp on cp.id = csgiip.fk_purchase_id
+                 right join cbs_contract cc on cc.id = cp.fk_contract_id
+                 left join cbs.cbs_produce cp on cp.fk_contract_id = cc.id
+        where cp.id = #{produceId}
+    </select>
+
+</mapper>

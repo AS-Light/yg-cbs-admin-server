@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsOutDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsOutEntity" id="cbsStoreGoodsOutMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="fkStoreId" column="fk_store_id"/>
+        <result property="fkTransitCompanyId" column="fk_transit_company_id"/>
+        <result property="wagonNumber" column="wagon_number"/>
+        <result property="createTime" column="create_time"/>
+        <result property="departTime" column="depart_time"/>
+        <result property="arrivalTime" column="arrival_time"/>
+        <result property="status" column="status"/>
+        <result property="deleteNote" column="delete_note"/>
+        <result property="examineTime" column="examine_time"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="operator" column="operator"/>
+        <result property="transFeeMoney" column="trans_fee_money"/>
+        <result property="fkProduceId" column="fk_produce_id"/>
+        <result property="fkExportId" column="fk_export_id"/>
+        <result property="fkSellId" column="fk_sell_id"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsOutEntity" extends="cbsStoreGoodsOutMap" id="indexMap">
+        <association property="produceEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsProduceEntity"
+                     column="fk_produce_id"
+                     select="io.renren.modules.cbs.dao.CbsProduceDao.simpleDetail"/>
+        <association property="exportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsExportEntity"
+                     column="fk_export_id"
+                     select="io.renren.modules.cbs.dao.CbsExportDao.simpleDetail"/>
+        <association property="sellEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsSellEntity"
+                     column="fk_sell_id"
+                     select="io.renren.modules.cbs.dao.CbsSellDao.simpleDetail"/>
+        <association property="storeEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryStoreEntity"
+                     column="fk_store_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryStoreDao.selectById"/>
+        <association property="transitCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryTransitCompanyEntity"
+                     column="fk_transit_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryTransitCompanyDao.selectById"/>
+        <collection property="storeGoodsOutItemEntityList"
+                    ofType="CbsStoreGoodsOutItemEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsOutItemDao.listByStoreOutId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsOutEntity" extends="cbsStoreGoodsOutMap"
+               id="simpleDetailMap">
+        <association property="storeEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryStoreEntity"
+                     column="fk_store_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryStoreDao.selectById"/>
+        <association property="transitCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryTransitCompanyEntity"
+                     column="fk_transit_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryTransitCompanyDao.selectById"/>
+        <collection property="storeGoodsOutItemEntityList"
+                    ofType="CbsStoreGoodsOutItemEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsOutItemDao.listByStoreOutId"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsOutEntity" extends="cbsStoreGoodsOutMap" id="detailMap">
+        <association property="produceEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsProduceEntity"
+                     column="fk_produce_id"
+                     select="io.renren.modules.cbs.dao.CbsProduceDao.simpleDetailWithGoodsItems"/>
+        <association property="exportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsExportEntity"
+                     column="fk_export_id"
+                     select="io.renren.modules.cbs.dao.CbsExportDao.simpleDetailWithGoodsItems"/>
+        <association property="sellEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsSellEntity"
+                     column="fk_sell_id"
+                     select="io.renren.modules.cbs.dao.CbsSellDao.simpleDetailWithGoodsItems"/>
+        <association property="storeEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryStoreEntity"
+                     column="fk_store_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryStoreDao.selectById"/>
+        <association property="transitCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryTransitCompanyEntity"
+                     column="fk_transit_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryTransitCompanyDao.selectById"/>
+        <collection property="storeGoodsOutItemEntityList"
+                    ofType="CbsStoreGoodsOutItemEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsOutItemDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutDeliveryOrderEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgStoreGoodsOutDeliveryOrderEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgStoreGoodsOutDeliveryOrderDao.listByStoreOutId"/>
+        <collection property="imgStoreGoodsOutReceiptEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgStoreGoodsOutReceiptEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgStoreGoodsOutReceiptDao.listByStoreOutId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+        SELECT
+        a.*
+        FROM
+        (
+        SELECT
+        csgo.*, csgop.fk_produce_id AS fk_produce_id,
+        csgoe.fk_export_id AS fk_export_id,
+        csgos.fk_sell_id AS fk_sell_id
+        FROM
+        cbs_store_goods_out csgo
+        LEFT JOIN cbs_store_goods_out_produce csgop ON csgo.id = csgop.fk_store_goods_out_id
+        LEFT JOIN cbs_store_goods_out_export csgoe ON csgo.id = csgoe.fk_store_goods_out_id
+        LEFT JOIN cbs_store_goods_out_sell csgos ON csgo.id = csgos.fk_store_goods_out_id
+        ) a
+        LEFT JOIN cbs_produce produce ON produce.id = a.fk_produce_id
+        LEFT JOIN cbs_export e ON e.id = a.fk_export_id
+        LEFT JOIN cbs_sell sell ON sell.id = a.fk_sell_id
+        WHERE
+        1=1
+        AND (produce.id IS NOT NULL
+        OR e.id IS NOT NULL
+        OR sell.id IS NOT NULL)
+        <if test="ew.fkContractIds != null">
+            AND (
+            produce.fk_contract_id IN
+            <foreach item="item" index="index" collection="ew.fkContractIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            OR e.fk_contract_id IN
+            <foreach item="item" index="index" collection="ew.fkContractIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+
+            OR sell.fk_contract_id IN
+            <foreach item="item" index="index" collection="ew.fkContractIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="ew.searchForm.status != null and ew.searchForm.status != ''">
+            AND a.`status` = #{ew.searchForm.status}
+        </if>
+        <if test="ew.searchForm.storeId != null and ew.searchForm.storeId != ''">
+            AND a.`fk_store_id` = #{ew.searchForm.storeId}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(a.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(a.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+    </select>
+
+    <select id="listSimpleDetailByProduceId" resultMap="simpleDetailMap">
+        select csgo.*
+        from cbs_store_goods_out csgo
+                 left join cbs_store_goods_out_produce csgop on csgop.fk_store_goods_out_id = csgo.id
+        where csgop.fk_produce_id = #{produceId}
+    </select>
+
+    <select id="listSimpleDetailByExportId" resultMap="simpleDetailMap">
+        select csgo.*
+        from cbs_store_goods_out csgo
+                 left join cbs_store_goods_out_export csgoe on csgoe.fk_store_goods_out_id = csgo.id
+        where csgoe.fk_export_id = #{exportId}
+    </select>
+
+    <select id="listSimpleDetailBySellId" resultMap="simpleDetailMap">
+        select csgo.*
+        from cbs_store_goods_out csgo
+                 left join cbs_store_goods_out_sell csgos on csgos.fk_store_goods_out_id = csgo.id
+        where csgos.fk_sell_id = #{sellId}
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select csgo.*,
+               csgop.fk_produce_id as fk_produce_id,
+               csgoe.fk_export_id  as fk_export_id,
+               csgos.fk_sell_id    as fk_sell_id
+        from cbs_store_goods_out csgo
+                 left join cbs_store_goods_out_produce csgop on csgo.id = csgop.fk_store_goods_out_id
+                 left join cbs_store_goods_out_export csgoe on csgo.id = csgoe.fk_store_goods_out_id
+                 left join cbs_store_goods_out_sell csgos on csgo.id = csgos.fk_store_goods_out_id
+        WHERE csgo.id = #{id}
+    </select>
+
+</mapper>

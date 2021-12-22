@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsProductionProcessStepDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsProductionProcessStepEntity" id="cbsProductionProcessStepMap">
+        <result property="id" column="id"/>
+        <result property="fkProductionProcessId" column="fk_production_process_id"/>
+        <result property="name" column="name"/>
+        <result property="isStart" column="is_start"/>
+        <result property="isEnd" column="is_end"/>
+        <result property="lastStepIdList" column="fk_last_step_ids" typeHandler="io.renren.common.handler.JsonTypeHandler"/>
+        <result property="nextStepIdList" column="fk_next_step_ids" typeHandler="io.renren.common.handler.JsonTypeHandler"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsProductionProcessStepEntity" id="simpleDetailMap"
+               extends="cbsProductionProcessStepMap">
+        <collection property="itemList"
+                    ofType="io.renren.modules.cbs.entity.CbsProductionProcessStepItemEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProductionProcessStepItemDao.listByStepId"/>
+    </resultMap>
+
+    <select id="listByProductionProcessId" resultMap="simpleDetailMap">
+        select *
+        from cbs_production_process_step
+        where fk_production_process_id = #{productionProcessId}
+    </select>
+</mapper>

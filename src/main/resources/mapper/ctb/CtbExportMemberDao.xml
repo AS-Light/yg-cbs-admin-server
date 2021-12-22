@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbExportMemberDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbExportMemberEntity" id="ctbExportMemberMap">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="fkExportId" column="fk_export_id"/>
+        <result property="fkPartnerId" column="fk_partner_id"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.ctb.entity.CtbExportMemberEntity" extends="ctbExportMemberMap">
+        <association property="partnerEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbPartnerEntity"
+                     column="fk_partner_id"
+                     select="io.renren.modules.ctb.dao.CtbPartnerDao.simpleDetailWithoutTenant"/>
+    </resultMap>
+
+    <select id="listByExportId" resultMap="detailMap">
+        select *
+        from ctb_export_member
+        where fk_export_id = #{exportId}
+    </select>
+</mapper>

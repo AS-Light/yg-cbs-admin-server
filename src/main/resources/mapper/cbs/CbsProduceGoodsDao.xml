@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsProduceGoodsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsProduceGoodsEntity" id="cbsProduceGoodsMap">
+        <result property="id" column="id"/>
+        <result property="fkProduceId" column="fk_produce_id"/>
+        <result property="goodsPartNo" column="goods_part_no"/>
+        <result property="goodsType" column="goods_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="operator" column="operator"/>
+        <result property="totalCount" column="total_count"/>
+        <result property="storeCount" column="store_count"/>
+        <result property="planCount" column="plan_count"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsProduceGoodsEntity" id="simpleDetailMap"
+               extends="cbsProduceGoodsMap">
+        <association property="partNoEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsGoodsPartNoEntity"
+                     column="goods_part_no"
+                     select="io.renren.modules.cbs.dao.CbsGoodsPartNoDao.selectByCode"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="simpleDetailMap">
+        select *
+        from cbs_produce_goods
+        where id = #{id}
+    </select>
+
+    <select id="listByProduceId" resultMap="simpleDetailMap">
+        select *
+        from cbs_produce_goods
+        where fk_produce_id = #{produceId}
+    </select>
+
+    <select id="listIdsByProduceIds" resultType="java.lang.Long">
+        select id
+        from cbs_produce_goods
+        where fk_produce_id in
+        <foreach collection="produceIds" item="produceId" index="index" open="(" separator="," close=")">
+            #{produceId}
+        </foreach>
+    </select>
+
+</mapper>

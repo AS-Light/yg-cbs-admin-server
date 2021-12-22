@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.sys.dao.SysCtbMenuDao">
+
+    <resultMap type="io.renren.modules.sys.entity.SysCtbMenuEntity" id="sysCtbMenuMap">
+        <result property="menuId" column="menu_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="perms" column="perms"/>
+        <result property="type" column="type"/>
+        <result property="icon" column="icon"/>
+        <result property="orderNum" column="order_num"/>
+    </resultMap>
+
+
+    <select id="selectByMenuId" resultMap="sysCtbMenuMap">
+        select *
+        from sys_ctb_menu
+        where menu_id = #{menuId}
+    </select>
+
+    <select id="queryListParentId" resultType="io.renren.modules.sys.entity.SysCtbMenuEntity">
+        select *
+        from sys_ctb_menu
+        where parent_id = #{parentId}
+        order by order_num asc
+    </select>
+
+    <select id="queryNotButtonList" resultType="io.renren.modules.sys.entity.SysCtbMenuEntity">
+        select *
+        from sys_ctb_menu
+        where type != 2
+        order by order_num asc
+    </select>
+
+</mapper>

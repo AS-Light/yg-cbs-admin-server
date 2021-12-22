@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsContractDao">
+
+    <resultMap id="cbsContractMap" type="CbsContractEntity">
+        <result property="id" column="id"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="type" column="type"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="title" column="title"/>
+        <result property="introduction" column="introduction"/>
+        <result property="money" column="money"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="operator" column="operator"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap" type="CbsContractEntity" extends="cbsContractMap">
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+        <collection property="memberEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractMemberEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractMemberDao.listByContractId"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailWithBindMap" type="CbsContractEntity" extends="simpleDetailMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsContractCtbProcessingTradeEntity"
+                     column="id"
+                     select="io.renren.modules.bind.dao.BindCbsContractCtbProcessingTradeDao.detailWithCtb"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailWithGoodsMap" type="CbsContractEntity" extends="simpleDetailWithBindMap">
+        <collection property="contractGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractGoodsDao.selectByContractId"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailWithChildren" type="CbsContractEntity" extends="simpleDetailWithBindMap">
+        <collection property="children"
+                    ofType="io.renren.modules.cbs.entity.CbsContractEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractDao.queryChildrenByParentId"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="CbsContractEntity" extends="simpleDetailWithBindMap">
+        <collection property="memberEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractMemberEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractMemberDao.listByContractId"/>
+        <collection property="contractGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractGoodsDao.selectByContractId"/>
+        <collection property="children"
+                    ofType="io.renren.modules.cbs.entity.CbsContractEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractDao.queryChildrenDetailByParentId"/>
+        <collection property="imgContractEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgContractEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgContractDao.queryByContractId"/>
+        <collection property="importEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImportEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImportDao.listByContractId"/>
+        <collection property="exportEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsExportEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsExportDao.listByContractId"/>
+        <collection property="purchaseEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsPurchaseEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsPurchaseDao.listByContractId"/>
+        <collection property="sellEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsSellEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsSellDao.listByContractId"/>
+        <collection property="produceEntity"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceDao.selectByContractId"/>
+    </resultMap>
+
+    <resultMap id="detailWithoutBindMap" type="CbsContractEntity" extends="simpleDetailMap">
+        <collection property="memberEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractMemberEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractMemberDao.listByContractId"/>
+        <collection property="contractGoodsList"
+                    ofType="io.renren.modules.cbs.entity.CbsContractGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractGoodsDao.selectByContractId"/>
+        <collection property="children"
+                    ofType="io.renren.modules.cbs.entity.CbsContractEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsContractDao.queryChildrenDetailByParentId"/>
+        <collection property="imgContractEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImgContractEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImgContractDao.queryByContractId"/>
+        <collection property="importEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsImportEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsImportDao.listByContractId"/>
+        <collection property="exportEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsExportEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsExportDao.listByContractId"/>
+        <collection property="purchaseEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsPurchaseEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsPurchaseDao.listByContractId"/>
+        <collection property="sellEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsSellEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsSellDao.listByContractId"/>
+        <collection property="produceEntity"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceDao.selectByContractId"/>
+    </resultMap>
+
+    <update id="updateByIdWithoutTenant" parameterType="CbsContractEntity">
+        update cbs_contract
+        <trim prefix="set" suffixOverrides=",">
+            <if test="seqNo!=null">seq_no=#{seqNo},</if>
+            <if test="emlNo!=null">eml_no=#{emlNo},</if>
+            <if test="status!=null">status=#{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <select id="queryIndex" resultMap="simpleDetailWithChildren">
+        SELECT
+        c.*
+        FROM
+        cbs_contract c
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        <if test="(ew.searchForm.partNo != null and ew.searchForm.partNo != '') or (ew.searchForm.inOutType != null and ew.searchForm.inOutType != '')">
+            LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+            LEFT JOIN cbs_goods_part_no gpn ON gpn.goods_part_no = cg.id
+            LEFT JOIN cbs_directory_goods dg ON dg.id = gpn.fk_goods_id
+        </if>
+        -- 有公司名称时连接
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            LEFT JOIN cbs_contract_member cm ON cm.fk_contract_id = c.id
+            LEFT JOIN cbs_partner p ON p.id = cm.fk_partner_id
+        </if>
+        WHERE
+        1 = 1
+        -- 料号
+        <if test="ew.searchForm.partNo != null and ew.searchForm.partNo != ''">
+            AND cg.id = #{ew.searchForm.partNo}
+        </if>
+        -- 进出口类型和商品名称
+        <if test="ew.searchForm.inOutType != null and ew.searchForm.inOutType != ''">
+            AND cg.type = #{ew.searchForm.inOutType}
+            AND dg.`name` LIKE concat('%',#{ew.searchForm.goodsName},'%')
+        </if>
+        -- 公司
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            AND p.`name` LIKE concat('%',#{ew.searchForm.companyName},'%')
+        </if>
+        -- 合同
+        <if test="ew.parentId != null and ew.parentId != ''">
+            AND c.parent_id = #{ew.parentId}
+        </if>
+        <if test="ew.title != null and ew.title != ''">
+            AND c.title LIKE concat('%',#{ew.title},'%')
+        </if>
+        <if test="ew.type != null and ew.type != ''">
+            AND c.type = #{ew.type}
+        </if>
+        <if test="ew.contractCode != null and ew.contractCode != ''">
+            AND c.contract_code LIKE concat('%',#{ew.contractCode},'%')
+        </if>
+        <if test="ew.status != null and ew.status != ''">
+            AND c.`status` = #{ew.status}
+        </if>
+        <if test="ew.searchForm.startingTime != null and ew.searchForm.startingTime != ''">
+            AND DATE_FORMAT(c.create_time, '%Y-%m-%d') >= #{ew.searchForm.startingTime}
+        </if>
+        <if test="ew.searchForm.endTime != null and ew.searchForm.endTime != ''">
+            AND DATE_FORMAT(c.create_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTime}
+        </if>
+        <if test="ew.searchForm.minimumAmount != null and ew.searchForm.minimumAmount != ''">
+            AND c.money >= #{ew.searchForm.minimumAmount}
+        </if>
+        <if test="ew.searchForm.maximumAmount != null and ew.searchForm.maximumAmount != ''">
+            AND c.money &lt;= #{ew.searchForm.maximumAmount}
+        </if>
+        <if test="ew.id != null and ew.id != ''">
+            AND c.id = #{ew.id}
+        </if>
+        GROUP BY
+        c.id
+        ORDER BY
+        c.id DESC
+    </select>
+
+    <select id="selectByIdWithoutTenant" resultMap="cbsContractMap">
+        select *
+        from cbs_contract
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from cbs_contract
+        where id = #{id}
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from cbs_contract
+        where id = #{id}
+    </select>
+
+    <select id="detailWithoutBindAndTenant" resultMap="detailWithoutBindMap">
+        select *
+        from cbs_contract
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailWithGoods" resultMap="simpleDetailWithGoodsMap">
+        select *
+        from cbs_contract
+        where id = #{id}
+    </select>
+
+    <select id="queryChildrenByParentId" resultMap="simpleDetailMap">
+        select *
+        from cbs_contract
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="queryChildrenDetailByParentId" resultMap="detailMap">
+        select *
+        from cbs_contract
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="listForCreateImport" resultMap="cbsContractMap">
+        /* 1、搜索合同类型 3、11 且合同状态 4、12 */
+        select cc.*
+        from cbs_contract as cc
+                 left join cbs_contract as ccp on cc.parent_id = ccp.id
+        where cc.type in (3, 11)
+          and cc.status in (4, 12)
+    </select>
+
+    <select id="listForCreateExport" resultMap="cbsContractMap">
+        /* 1、搜索合同类型 4、12 且合同状态 4、12 */
+        select cc.*
+        from cbs_contract as cc
+                 left join cbs_contract as ccp on cc.parent_id = ccp.id
+        where cc.type in (4, 12)
+          and cc.status in (4, 12)
+    </select>
+
+    <select id="listForCreatePurchase" resultMap="cbsContractMap">
+        /* 1、搜索合同类型 5、13 且合同状态 4、12 */
+        select cc.*
+        from cbs_contract as cc
+                 left join cbs_contract as ccp on cc.parent_id = ccp.id
+        where cc.type in (5, 13)
+          and cc.status in (4, 12)
+    </select>
+
+    <select id="listForCreateSell" resultMap="cbsContractMap">
+        /* 1、搜索合同类型 6 且合同状态 4、12 */
+        select cc.*
+        from cbs_contract as cc
+                 left join cbs_contract as ccp on cc.parent_id = ccp.id
+        where cc.type in (6)
+          and cc.status in (4, 12)
+    </select>
+
+    <select id="listForCreateProduce" resultMap="cbsContractMap">
+        /* 1、搜索合同类型 1、2 且合同状态 4、12 */
+        select cc.*
+        from cbs_contract as cc
+                 left join cbs_contract as ccp on cc.parent_id = ccp.id
+        where cc.type in (1, 2)
+          and cc.status in (4, 12)
+    </select>
+
+    <select id="selectContractByImportBillCode" resultMap="simpleDetailMap">
+        SELECT c.`id`,
+               c.`currency_code`,
+               c.`type`,
+               c.`parent_id`,
+               c.`contract_code`,
+               c.`title`,
+               c.`introduction`,
+               c.`money`,
+               c.`create_time`,
+               c.`operator`,
+               c.`status`
+        FROM cbs_import t
+                 LEFT JOIN cbs_contract c ON c.id = t.fk_contract_id
+        WHERE t.entry_bill_code = #{ew.billCode}
+    </select>
+
+    <select id="selectContractByExportBillCode" resultMap="simpleDetailMap">
+        SELECT c.`id`,
+               c.`currency_code`,
+               c.`type`,
+               c.`parent_id`,
+               c.`contract_code`,
+               c.`title`,
+               c.`introduction`,
+               c.`money`,
+               c.`create_time`,
+               c.`operator`,
+               c.`status`
+        FROM cbs_export t
+                 LEFT JOIN cbs_contract c ON c.id = t.fk_contract_id
+        WHERE t.entry_bill_code = #{ew.billCode}
+    </select>
+
+    <select id="selectContractByGoodsCode" resultMap="simpleDetailMap">
+        SELECT c.`id`,
+               c.`currency_code`,
+               c.`type`,
+               c.`parent_id`,
+               c.`contract_code`,
+               c.`title`,
+               c.`introduction`,
+               c.`money`,
+               c.`create_time`,
+               c.`operator`,
+               c.`status`
+        FROM cbs_contract c
+                 LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+        WHERE cg.id = #{ew.goodsCode}
+    </select>
+    <select id="selectContractByHsCode" resultMap="simpleDetailMap">
+        SELECT c.`id`,
+               c.`currency_code`,
+               c.`type`,
+               c.`parent_id`,
+               c.`contract_code`,
+               c.`title`,
+               c.`introduction`,
+               c.`money`,
+               c.`create_time`,
+               c.`operator`,
+               c.`status`
+        FROM cbs_contract c
+                 LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+                 LEFT JOIN cbs_goods_part_no gpn ON gpn.goods_part_no = cg.id
+                 LEFT JOIN cbs_directory_goods dg ON dg.id = gpn.fk_goods_id
+        WHERE dg.hs_code = #{ew.hsCode}
+    </select>
+</mapper>

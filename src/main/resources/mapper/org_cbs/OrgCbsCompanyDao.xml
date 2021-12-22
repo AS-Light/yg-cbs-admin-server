@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity" id="orgCbsCompanyMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="contactor" column="contactor"/>
+        <result property="customsCode" column="customs_code"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="inspectionCode" column="inspection_code"/>
+        <result property="aeoCode" column="aeo_code"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="effectiveTime" column="effective_time"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="webUrl" column="web_url"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+
+</mapper>

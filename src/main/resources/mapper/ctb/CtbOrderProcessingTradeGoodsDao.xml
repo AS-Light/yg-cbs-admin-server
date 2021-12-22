@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbOrderProcessingTradeGoodsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbOrderProcessingTradeGoodsEntity"
+               id="ctbOrderProcessingTradeGoodsMap">
+        <result property="id" column="id"/>
+        <result property="fkOrderProcessingTradeId" column="fk_order_processing_trade_id"/>
+        <result property="indexInOrderProcessingTrade" column="index_in_order_processing_trade"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.ctb.entity.CtbOrderProcessingTradeGoodsEntity" id="simpleDetailMap"
+               extends="ctbOrderProcessingTradeGoodsMap">
+        <association property="partNoEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity"
+                     column="id"
+                     select="io.renren.modules.ctb.dao.CtbGoodsPartNoDao.selectByCode"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbOrderProcessingTradeGoodsEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_order_processing_trade_goods(fk_order_processing_trade_id, index_in_order_processing_trade, type)
+        values (#{fkOrderProcessingTradeId}, #{indexInOrderProcessingTrade}, #{type})
+    </insert>
+
+    <select id="selectByOrderProcessingTradeId" resultMap="simpleDetailMap">
+        select *
+        from ctb_order_processing_trade_goods
+        where fk_order_processing_trade_id = #{orderProcessingTradeId}
+    </select>
+
+    <select id="detail" resultMap="simpleDetailMap">
+        select *
+        from ctb_order_processing_trade_goods
+        where id = #{id}
+    </select>
+</mapper>

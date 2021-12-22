@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsEmlDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="cstNptsEmlMap"
+               type="io.renren.modules.cst.entity.CstNptsEmlEntity">
+        <result property="id" column="id"/>
+    </resultMap>
+
+    <resultMap id="detailMap"
+               type="io.renren.modules.cst.entity.CstNptsEmlEntity"
+               extends="cstNptsEmlMap">
+        <association property="emlHeader"
+                     javaType="io.renren.modules.cst.entity.CstNptsEmlHeaderEntity"
+                     column="id"
+                     select="io.renren.modules.cst.dao.CstNptsEmlHeaderDao.selectById"/>
+        <collection property="emlImgList"
+                    ofType="io.renren.modules.cst.entity.CstNptsEmlImgExgEntity"
+                    column="id"
+                    select="io.renren.modules.cst.dao.CstNptsEmlImgExgDao.queryByNptsEmlId"/>
+        <collection property="emlConsumeList"
+                    ofType="io.renren.modules.cst.entity.CstNptsEmlConsumeEntity"
+                    column="id"
+                    select="io.renren.modules.cst.dao.CstNptsEmlConsumeDao.queryByNptsEmlId"/>
+    </resultMap>
+
+    <select id="detail" resultMap="detailMap">
+        select id
+        from cst_npts_eml_header
+        where id = #{id}
+    </select>
+
+    <select id="detailByContractId" resultMap="detailMap">
+        select id
+        from cst_npts_eml_header
+        where fk_contract_id = #{contractId}
+    </select>
+
+</mapper>

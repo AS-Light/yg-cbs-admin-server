@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbOrderProcessingTradeManagerChangeStreamDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbOrderProcessingTradeManagerChangeStreamEntity"
+               id="ctbOrderProcessingTradeManagerChangeStreamMap">
+        <result property="id" column="id"/>
+        <result property="fkOrderProcessingTradeId" column="fk_order_processing_trade_id"/>
+        <result property="operator" column="operator"/>
+        <result property="lastManager" column="last_manager"/>
+        <result property="manager" column="manager"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+
+</mapper>

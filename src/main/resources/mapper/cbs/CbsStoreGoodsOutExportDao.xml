@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsStoreGoodsOutExportDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsStoreGoodsOutExportEntity" id="cbsStoreGoodsOutExportMap">
+        <result property="id" column="id"/>
+        <result property="fkStoreGoodsOutId" column="fk_store_goods_out_id"/>
+        <result property="fkExportId" column="fk_export_id"/>
+        <association property="goodsOutEntity"
+                     javaType="CbsStoreGoodsOutEntity"
+                     column="fk_store_goods_out_id"
+                     select="io.renren.modules.cbs.dao.CbsStoreGoodsOutDao.selectById"/>
+    </resultMap>
+
+    <select resultMap="cbsStoreGoodsOutExportMap" id="selectById">
+        select csgoe.*
+        from cbs_store_goods_out_export csgoe
+        where csgoe.id = #{id}
+    </select>
+
+    <select resultMap="cbsStoreGoodsOutExportMap" id="selectByExportId">
+        select csgoe.*
+        from cbs_store_goods_out_export csgoe
+        where csgoe.fk_export_id = #{exportId}
+    </select>
+
+    <select resultMap="cbsStoreGoodsOutExportMap" id="selectByStoreOutId">
+        select csgoe.*
+        from cbs_store_goods_out_export csgoe
+        where csgoe.fk_store_goods_out_id = #{storeOutId}
+    </select>
+
+    <select resultMap="cbsStoreGoodsOutExportMap" id="listByContract">
+        select csgoe.*
+        from cbs_store_goods_out_export csgoe
+                 left join cbs_export ce on ce.id = csgoe.fk_export_id
+        where ce.fk_contract_id = #{contractId}
+    </select>
+
+</mapper>

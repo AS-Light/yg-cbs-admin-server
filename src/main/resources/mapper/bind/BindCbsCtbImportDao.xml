@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.bind.dao.BindCbsCtbImportDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCtbImportEntity" id="bindCbsCtbImportMap">
+        <result property="id" column="id"/>
+        <result property="fkCbsCompanyId" column="fk_cbs_company_id"/>
+        <result property="fkCtbCompanyId" column="fk_ctb_company_id"/>
+        <result property="fkCbsImportId" column="fk_cbs_import_id"/>
+        <result property="fkCtbImportId" column="fk_ctb_import_id"/>
+        <result property="isWorkByCtb" column="is_work_by_ctb"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.bind.entity.BindCbsCtbImportEntity" id="indexMap">
+        <association property="cbsCompanyEntity"
+                     javaType="io.renren.modules.org_cbs.entity.OrgCbsCompanyEntity"
+                     column="fk_cbs_company_id"
+                     select="io.renren.modules.org_cbs.dao.OrgCbsCompanyDao.selectById"/>
+        <association property="ctbCompanyEntity"
+                     javaType="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+                     column="fk_ctb_company_id"
+                     select="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao.selectById"/>
+        <association property="cbsImportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsImportEntity"
+                     column="fk_cbs_import_id"
+                     select="io.renren.modules.cbs.dao.CbsImportDao.selectById"/>
+        <association property="ctbImportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbImportEntity"
+                     column="fk_ctb_import_id"
+                     select="io.renren.modules.ctb.dao.CtbImportDao.selectById"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.bind.entity.BindCbsCtbImportEntity" extends="bindCbsCtbImportMap">
+        <association property="cbsImportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsImportEntity"
+                     column="fk_cbs_import_id"
+                     select="io.renren.modules.cbs.dao.CbsImportDao.BindCbsCtbImportEntity"/>
+        <association property="ctbImportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbImportEntity"
+                     column="fk_ctb_import_id"
+                     select="io.renren.modules.ctb.dao.CtbImportDao.BindCbsCtbImportEntity"/>
+    </resultMap>
+
+    <resultMap id="detailWithCbsMap" type="io.renren.modules.bind.entity.BindCbsCtbImportEntity"
+               extends="bindCbsCtbImportMap">
+        <association property="cbsImportEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsImportEntity"
+                     column="fk_cbs_import_id"
+                     select="io.renren.modules.cbs.dao.CbsImportDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <resultMap id="detailWithCtbMap" type="io.renren.modules.bind.entity.BindCbsCtbImportEntity"
+               extends="bindCbsCtbImportMap">
+        <association property="ctbImportEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbImportEntity"
+                     column="fk_ctb_import_id"
+                     select="io.renren.modules.ctb.dao.CtbImportDao.detailWithoutBindAndTenant"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="indexMap">
+
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+
+    </select>
+
+    <select id="detailWithCbs" resultMap="detailWithCbsMap">
+        select *
+        from bind_cbs_ctb_import
+        where fk_ctb_import_id = #{ctbImportId}
+    </select>
+
+    <select id="detailWithCtb" resultMap="detailWithCtbMap">
+        select *
+        from bind_cbs_ctb_import
+        where fk_cbs_import_id = #{cbsImportId}
+    </select>
+</mapper>

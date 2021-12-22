@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbGoodsPartNoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity" id="ctbGoodsPartNoMap">
+        <result property="id" column="id"/>
+        <result property="goodsPartNo" column="goods_part_no"/>
+        <result property="fkGoodsId" column="fk_goods_id"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="unitCode" column="unit_code"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="contractCount" column="contract_count"/>
+        <result property="contractPrice" column="contract_price"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity"
+               extends="ctbGoodsPartNoMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCtbGoodsPartNoEntity"
+                     column="goods_part_no"
+                     select="io.renren.modules.bind.dao.BindCbsCtbGoodsPartNoDao.detailWithCbs"/>
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryGoodsDao.selectById"/>
+        <association property="unitEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsUnitEntity"
+                     column="unit_code"
+                     select="io.renren.modules.thr.dao.ThrHsUnitDao.selectByCode"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+    </resultMap>
+
+    <resultMap id="detailWithoutBindMap" type="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity"
+               extends="ctbGoodsPartNoMap">
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryGoodsDao.selectById"/>
+        <association property="unitEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsUnitEntity"
+                     column="unit_code"
+                     select="io.renren.modules.thr.dao.ThrHsUnitDao.selectByCode"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbGoodsPartNoEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_goods_part_no(goods_part_no, fk_goods_id, currency_code, unit_code, unit_price, contract_count,
+                                      contract_price)
+        values (#{goodsPartNo}, #{fkGoodsId}, #{currencyCode}, #{unitCode}, #{unitPrice}, #{contractCount},
+                #{contractPrice})
+    </insert>
+
+    <select id="selectByCode" resultMap="detailMap">
+        select *
+        from ctb_goods_part_no
+        where goods_part_no = #{partNo}
+    </select>
+
+    <select id="selectByCodeWithoutBind" resultMap="detailWithoutBindMap">
+        select *
+        from ctb_goods_part_no
+        where goods_part_no = #{partNo}
+    </select>
+</mapper>

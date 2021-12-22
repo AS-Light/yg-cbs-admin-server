@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.org_cbs.dao.OrgCbsUserRoleDao">
+
+    <resultMap type="io.renren.modules.org_cbs.entity.OrgCbsUserRoleEntity" id="orgCbsUserRoleMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+
+    <delete id="deleteBatch">
+        delete from org_cbs_user_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <select id="queryRoleIdList" resultType="long">
+        select role_id
+        from org_cbs_user_role
+        where user_id = #{value}
+    </select>
+</mapper>

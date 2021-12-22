@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsImgStoreGoodsOutReceiptDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsImgStoreGoodsOutReceiptEntity" id="cbsImgStoreGoodsOutReceiptMap">
+        <result property="id" column="cisgir_id"/>
+        <result property="fkStoreGoodsOutId" column="fk_store_goods_out_id"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="sort" column="sort"/>
+        <result property="isValid" column="is_valid"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="listByStoreOutId" resultMap="cbsImgStoreGoodsOutReceiptMap">
+        select *
+        from cbs_img_store_goods_out_receipt
+        where fk_store_goods_out_id = #{storeGoodsOutId}
+    </select>
+</mapper>

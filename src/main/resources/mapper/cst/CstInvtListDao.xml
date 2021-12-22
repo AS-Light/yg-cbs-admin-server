@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstInvtListDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstInvtListEntity" id="cstInvtListMap">
+        <result property="id" column="id"/>
+        <result property="fkInvtHeaderId" column="fk_invt_header_id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="gdsSeqno" column="gds_seqno"/>
+        <result property="putrecSeqno" column="putrec_seqno"/>
+        <result property="gdsMtno" column="gds_mtno"/>
+        <result property="gdecd" column="gdecd"/>
+        <result property="gdsNm" column="gds_nm"/>
+        <result property="gdsSpcfModelDesc" column="gds_spcf_model_desc"/>
+        <result property="dclUnitcd" column="dcl_unitcd"/>
+        <result property="lawfUnitcd" column="lawf_unitcd"/>
+        <result property="secdLawfUnitcd" column="secd_lawf_unitcd"/>
+        <result property="natcd" column="natcd"/>
+        <result property="dclUprcAmt" column="dcl_uprc_amt"/>
+        <result property="dclTotalAmt" column="dcl_total_amt"/>
+        <result property="usdStatTotalAmt" column="usd_stat_total_amt"/>
+        <result property="dclCurrcd" column="dcl_currcd"/>
+        <result property="lawfQty" column="lawf_qty"/>
+        <result property="secdLawfQty" column="secd_lawf_qty"/>
+        <result property="wtSfVal" column="wt_sf_val"/>
+        <result property="fstSfVal" column="fst_sf_val"/>
+        <result property="secdSfVal" column="secd_sf_val"/>
+        <result property="dclQty" column="dcl_qty"/>
+        <result property="grossWt" column="gross_wt"/>
+        <result property="netWt" column="net_wt"/>
+        <result property="useCd" column="use_cd"/>
+        <result property="lvyrlfModecd" column="lvyrlf_modecd"/>
+        <result property="ucnsVerno" column="ucns_verno"/>
+        <result property="entryGdsSeqno" column="entry_gds_seqno"/>
+        <result property="clyMarkcd" column="cly_markcd"/>
+        <result property="applyTbSeqno" column="apply_tb_seqno"/>
+        <result property="destinationNatcd" column="destination_natcd"/>
+        <result property="modfMarkcd" column="modf_markcd"/>
+        <result property="rmk" column="rmk"/>
+    </resultMap>
+
+    <select id="queryByInvtId" resultMap="cstInvtListMap">
+        select *
+        from cst_invt_list
+        where fk_invt_header_id = #{invtId}
+        order by gds_seqno
+    </select>
+</mapper>

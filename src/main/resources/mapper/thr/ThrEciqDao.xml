@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrEciqDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrEciqEntity" id="thrEciqMap">
+        <result property="id" column="id"/>
+        <result property="eciqCode" column="eciq_code"/>
+        <result property="nameCn" column="name_cn"/>
+        <result property="nameEn" column="name_en"/>
+    </resultMap>
+
+
+</mapper>

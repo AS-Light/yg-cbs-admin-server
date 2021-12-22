@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrOrigPlaceCodeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrOrigPlaceCodeEntity" id="thrOrigPlaceCodeMap">
+        <result property="id" column="id"/>
+        <result property="origPlaceCode" column="orig_place_code"/>
+        <result property="iso2" column="iso2"/>
+        <result property="iso3" column="iso3"/>
+        <result property="nameCn" column="name_cn"/>
+        <result property="nameEn" column="name_en"/>
+        <result property="classCode" column="class_code"/>
+    </resultMap>
+
+
+</mapper>

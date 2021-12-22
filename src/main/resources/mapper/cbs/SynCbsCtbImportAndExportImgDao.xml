@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.SynCbsCtbImportAndExportImgDao">
+
+    <select id="selectByField" resultType="java.lang.String">
+        SELECT
+            img_url
+        FROM
+            ${ew.originalTable}
+        WHERE
+            ${ew.fkField} = #{ew.originalFkId}
+    </select>
+
+    <delete id="deleteByField">
+        DELETE
+        FROM
+        ${ew.targetTable}
+        WHERE
+        ${ew.fkField} = #{ew.targetFkId}
+    </delete>
+
+    <insert id="insertImg">
+        INSERT INTO ${ew.targetTable}
+        (${ew.fkField},img_url)
+        VALUES
+        (#{ew.targetFkId},#{ew.img})
+    </insert>
+
+</mapper>

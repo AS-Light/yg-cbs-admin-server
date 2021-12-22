@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.org_ctb.dao.OrgCtbCompanyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity" id="orgCtbCompanyMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="contactor" column="contactor"/>
+        <result property="customsCode" column="customs_code"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="inspectionCode" column="inspection_code"/>
+        <result property="aeoCode" column="aeo_code"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="effectiveTime" column="effective_time"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="webUrl" column="web_url"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailWithBindMap" type="io.renren.modules.org_ctb.entity.OrgCtbCompanyEntity"
+               extends="orgCtbCompanyMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+                     column="bind_id"
+                     select="io.renren.modules.bind.dao.BindCbsCustomsBrokerCtbCompanyDao.detailWithCbs"/>
+    </resultMap>
+
+    <select id="listWithCbsBind" resultMap="simpleDetailWithBindMap">
+        select occ.*, bccbcc.id as bind_id
+        from org_ctb_company occ
+                 left join bind_cbs_customs_broker_ctb_company bccbcc
+                           on occ.id = bccbcc.fk_ctb_company_id and bccbcc.fk_cbs_company_id = #{cbsCompanyId}
+        <if test="ctbName != null and ctbName != ''">
+            where occ.name like concat('%',#{ctbName},'%')
+            or occ.name_en like concat('%',#{ctbName},'%')
+        </if>
+    </select>
+</mapper>

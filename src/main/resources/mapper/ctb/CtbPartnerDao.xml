@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbPartnerDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbPartnerEntity" id="ctbPartnerMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="fkCountryId" column="fk_country_id"/>
+        <result property="customsCode" column="customs_code"/>
+        <result property="inspectionCode" column="inspection_code"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="aeoCode" column="aeo_code"/>
+        <result property="contactor" column="contactor"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="isTheCompany" column="is_the_company"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.ctb.entity.CtbPartnerEntity"
+               extends="ctbPartnerMap">
+        <association property="countryEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCountryCodeEntity"
+                     select="io.renren.modules.thr.dao.ThrCountryCodeDao.selectById"
+                     column="fk_country_id"/>
+        <collection property="typeList"
+                    select="io.renren.modules.ctb.dao.CtbPartnerTypeDao.listByPartnerId"
+                    ofType="io.renren.modules.ctb.entity.CtbPartnerTypeEntity"
+                    column="id"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.ctb.entity.CtbPartnerEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ctb_partner(name, fk_country_id, customs_code, inspection_code, credit_code, aeo_code, phone,
+                                contactor, address, available, ctb_tenant_id)
+        values (#{name}, #{fkCountryId}, #{customsCode}, #{inspectionCode}, #{creditCode}, #{aeoCode}, #{phone},
+                #{contactor}, #{address}, #{available}, #{ctbTenantId})
+    </insert>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from ctb_partner
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailWithoutTenant" resultMap="simpleDetailMap">
+        select *
+        from ctb_partner
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailByCode" resultMap="simpleDetailMap">
+        select *
+        from ctb_partner
+        where customs_code = #{code}
+    </select>
+
+    <select id="listByTypes" resultMap="simpleDetailMap">
+        select *
+        from ctb_partner as cp
+        left join ctb_partner_type as cpt on cp.id = cpt.fk_partner_id
+        where cpt.type in
+        <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+        <if test="name != null &amp;&amp; name != ''">
+            and cp.name like concat('%', #{name}, '%')
+        </if>
+        and cp.available = 1
+    </select>
+
+    <select id="findSameToCbs" resultMap="simpleDetailMap">
+        select *
+        from ctb_partner
+        where name = #{cbsEntity.name}
+          and customs_code = #{cbsEntity.customsCode}
+          and inspection_code = #{cbsEntity.inspectionCode}
+          and credit_code = #{cbsEntity.creditCode}
+          and contactor = #{cbsEntity.contactor}
+          and phone = #{cbsEntity.phone}
+          and address = #{cbsEntity.address}
+          and ctb_tenant_id = #{ctbTenantId}
+        limit 1
+    </select>
+</mapper>

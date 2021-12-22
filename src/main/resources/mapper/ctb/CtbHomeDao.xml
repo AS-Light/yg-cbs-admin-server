@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.renren.modules.ctb.dao.CtbHomeDao">
+    <select id="selectTotal" resultType="StatisticalDigital">
+        SELECT
+        IFNULL(a.total, 0) total,
+        IFNULL(b.processing, 0) processing
+        FROM
+        (
+        SELECT
+        ctb_tenant_id,
+        COUNT(id) total
+        FROM
+        ${tableName}
+        WHERE
+        1 = 1
+        AND ctb_tenant_id = #{ctbTenantId}
+        ) a
+        LEFT JOIN (
+        SELECT
+        COUNT(id) processing,
+        ctb_tenant_id
+        FROM
+        ${tableName}
+        WHERE
+        `status` &lt; #{completeStatus}
+        AND ctb_tenant_id = #{ctbTenantId}
+        ) b ON b.ctb_tenant_id = a.ctb_tenant_id
+    </select>
+    <select id="incomeExpendList" resultType="StatisticalDigital">
+        SELECT
+        /*SUM( case when ISNULL(cm.cny) then cm.money * tc.exchange_rate / 100 else cm.cny end) money,*/
+        SUM(cm.cny) money,
+        DATE_FORMAT( create_time, '%m' ) months
+        FROM
+        ${tableName} cm
+        left join thr_currency tc on cm.currency_code = tc.code
+        WHERE
+        cm.ctb_tenant_id = #{ctbTenantId}
+        AND cm.cny IS NOT NULL
+        <if test="months != null and months != ''">
+            AND DATE_FORMAT(create_time, '%Y/%m') IN
+            <foreach collection="months" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY
+        DATE_FORMAT(create_time, '%Y-%m');
+    </select>
+    <select id="canadaTradeApplyToCustoms" resultType="io.renren.modules.cbs.entity.StatisticalDigital">
+        SELECT
+            COUNT(id) money,
+            DATE_FORMAT(create_time, '%m') months
+        FROM
+            ${tableName}
+        WHERE
+            ctb_tenant_id = #{ctbTenantId}
+        <if test="months != null and months != ''">
+            AND DATE_FORMAT(create_time, '%Y/%m') IN
+            <foreach collection="months" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectTotalInOut" resultType="io.renren.modules.cbs.entity.StatisticalDigital">
+        SELECT
+            SUM(cny) total
+        FROM
+            ${tableName}
+        WHERE
+            ctb_tenant_id = #{ctbTenantId}
+            AND cny IS NOT NULL
+    </select>
+
+</mapper>

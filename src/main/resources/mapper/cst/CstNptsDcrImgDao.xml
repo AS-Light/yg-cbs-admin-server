@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsDcrImgDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsDcrImgEntity" id="cstNptsDcrImgMap">
+        <result property="id" column="id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="gNo" column="g_no"/>
+        <result property="emlSeqno" column="eml_seqno"/>
+        <result property="gdsMtno" column="gds_mtno"/>
+        <result property="gdecd" column="gdecd"/>
+        <result property="gdsnm" column="gdsnm"/>
+        <result property="dclUnitcd" column="dcl_unitcd"/>
+        <result property="impTotalQty" column="imp_total_qty"/>
+        <result property="dprcsCrdImpQty" column="dprcs_crd_imp_qty"/>
+        <result property="sdinQty" column="sdin_qty"/>
+        <result property="reexpQty" column="reexp_qty"/>
+        <result property="mtpckDstryQty" column="mtpck_dstry_qty"/>
+        <result property="lfmtQty" column="lfmt_qty"/>
+        <result property="remainCrdwQty" column="remain_crdw_qty"/>
+        <result property="csmTotalQty" column="csm_total_qty"/>
+        <result property="remainMtpckQty" column="remain_mtpck_qty"/>
+        <result property="rmk" column="rmk"/>
+    </resultMap>
+
+
+</mapper>

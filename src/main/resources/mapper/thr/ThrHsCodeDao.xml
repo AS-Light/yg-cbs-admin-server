@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.thr.dao.ThrHsCodeDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.thr.entity.ThrHsCodeEntity" id="thrHsCodeMap">
+        <result property="id" column="id"/>
+        <result property="hsCode" column="hs_code"/>
+        <result property="name" column="name"/>
+        <result property="exportTariff" column="export_tariff"/>
+        <result property="exportTaxRebateTariff" column="export_tax_rebate_tariff"/>
+        <result property="exportTemporaryTariff" column="export_temporary_tariff"/>
+        <result property="gainsTariff" column="gains_tariff"/>
+        <result property="mfnImportTariff" column="mfn_import_tariff"/>
+        <result property="importTemporaryTariff" column="import_temporary_tariff"/>
+        <result property="importTariff" column="import_tariff"/>
+        <result property="consumptionTariff" column="consumption_tariff"/>
+        <result property="firUnit" column="fir_unit"/>
+        <result property="secUnit" column="sec_unit"/>
+        <result property="firUnitCode" column="fir_unit_code"/>
+        <result property="secUnitCode" column="sec_unit_code"/>
+        <result property="supervisionType" column="supervision_type"/>
+        <result property="supervisionInfo" column="supervision_info"/>
+        <result property="ciqType" column="ciq_type"/>
+        <result property="ciqInfo" column="ciq_info"/>
+        <result property="reportElements" column="report_elements"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.thr.entity.ThrHsCodeEntity" extends="thrHsCodeMap">
+        <collection property="ciqCodeEntityList"
+                    ofType="io.renren.modules.thr.entity.ThrCiqCodeEntity"
+                    column="id"
+                    select="io.renren.modules.thr.dao.ThrCiqCodeDao.listByHsCode"/>
+    </resultMap>
+
+    <select id="pageByCodeOrName" resultMap="simpleDetailMap">
+        select *
+        from thr_hs_code
+        where name like concat('%',#{params.name},'%')
+           or hs_code like concat('%',#{params.hsCode},'%')
+    </select>
+
+    <select id="selectByHsCode" resultMap="simpleDetailMap">
+        select *
+        from thr_hs_code
+        where hs_code like concat('%',#{hsCode},'%')
+    </select>
+
+</mapper>

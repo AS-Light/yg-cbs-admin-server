@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsDirectoryCustomsBrokerDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsDirectoryCustomsBrokerEntity" id="cbsDirectoryCustomsBrokerMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="contactor" column="contactor"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+    </resultMap>
+
+    <resultMap id="detailWithBindMap" type="io.renren.modules.cbs.entity.CbsDirectoryCustomsBrokerEntity"
+               extends="cbsDirectoryCustomsBrokerMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCustomsBrokerCtbCompanyEntity"
+                     column="id"
+                     select="io.renren.modules.bind.dao.BindCbsCustomsBrokerCtbCompanyDao.detailWithCtbByCbsDirectoryId"/>
+    </resultMap>
+
+    <select id="queryIndex" resultType="io.renren.modules.cbs.entity.CbsDirectoryCustomsBrokerEntity">
+        SELECT
+        a.*,
+        b.fk_ctb_service_company_id,
+        b.fk_ctb_service_contract_id,
+        b.status
+        FROM
+        cbs_directory_customs_broker a
+        LEFT JOIN bind_cbs_customs_broker_ctb_company b ON b.fk_cbs_custom_broker_id = a.id
+        WHERE
+        available = 1
+        <if test="ew.name != null and ew.name != ''">
+            AND a.name LIKE concat('%',#{ew.name},'%')
+        </if>
+    </select>
+
+    <select id="listBound" resultMap="detailWithBindMap">
+        select *
+        from cbs_directory_customs_broker cdcb
+                 left join bind_cbs_customs_broker_ctb_company bccbcc on bccbcc.fk_cbs_custom_broker_id = cdcb.id
+        where bccbcc.status = 4
+    </select>
+
+</mapper>

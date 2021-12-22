@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.renren.modules.cbs.dao.CbsHomeDao">
+    <select id="selectTotalList" resultType="StatisticalDigital">
+        SELECT a.type,
+               a.total,
+               IFNULL(b.processing, 0) processing
+        FROM (
+                 SELECT type,
+                        COUNT(id) total
+                 FROM cbs_contract
+                 WHERE type IN (1, 2, 3, 4, 5, 6)
+                   AND tenant_id = #{tenantId}
+                 GROUP BY type
+             ) a
+                 LEFT JOIN
+             (
+                 SELECT type,
+                        COUNT(id) processing
+                 FROM cbs_contract
+                 WHERE type IN (1, 2, 3, 4, 5, 6)
+                   AND `status` &lt; 13
+                   AND tenant_id = #{tenantId}
+                 GROUP BY type
+             ) b ON b.type = a.type
+    </select>
+    <select id="selectTotal" resultType="StatisticalDigital">
+        SELECT IFNULL(a.total, 0) total,
+               IFNULL(b.processing, 0) processing
+        FROM (
+                 SELECT tenant_id,
+                        COUNT(id) total
+                 FROM ${tableName}
+                 WHERE 1 = 1
+                   AND tenant_id = #{tenantId}
+             ) a
+                 LEFT JOIN (
+            SELECT COUNT(id) processing,
+                   tenant_id
+            FROM ${tableName}
+            WHERE `status` &lt; #{completeStatus}
+              AND tenant_id = #{tenantId}
+        ) b ON b.tenant_id = a.tenant_id
+    </select>
+    <select id="incomeExpendList" resultType="StatisticalDigital">
+        SELECT
+        SUM( case when ISNULL(cm.cny) then cm.money * tc.exchange_rate / 100 else cm.cny end) money,
+        DATE_FORMAT( create_time, '%m' ) months
+        FROM
+        ${tableName} cm
+        left join thr_currency tc on cm.currency_code = tc.code
+        WHERE
+        cm.tenant_id = #{tenantId}
+        <if test="months != null and months != ''">
+            AND DATE_FORMAT(create_time, '%Y/%m') IN
+            <foreach collection="months" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY
+        DATE_FORMAT(create_time, '%Y-%m');
+    </select>
+    <select id="upcomingContract" resultType="StatisticalContract">
+        SELECT c.id,
+               c.contract_code,
+               c.title,
+               c.introduction,
+               c.type,
+               c.`status`
+        FROM cbs_contract c
+        WHERE tenant_id = #{tenantId}
+          AND c.type &lt; 7
+          AND c.`status` IN (1, 2, 3)
+    </select>
+    <select id="upcomingDelivery" resultType="StatisticalContract">
+        SELECT t.id,
+               c.contract_code,
+               c.title,
+               c.introduction,
+               #{type} AS type,
+               c.`status`
+        FROM ${tableName} t
+                 LEFT JOIN cbs_contract c ON c.id = t.fk_contract_id
+        WHERE t.tenant_id = #{tenantId}
+          AND t.`status` IN (1, 2, 3)
+    </select>
+</mapper>

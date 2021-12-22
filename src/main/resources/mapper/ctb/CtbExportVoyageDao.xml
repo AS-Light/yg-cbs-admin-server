@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbExportVoyageDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbExportVoyageEntity" id="ctbExportVoyageMap">
+        <result property="id" column="id"/>
+        <result property="fkExportId" column="fk_export_id"/>
+        <result property="fkShipCompanyId" column="fk_ship_company_id"/>
+        <result property="transportName" column="transport_name"/>
+        <result property="voyageNo" column="voyage_no"/>
+        <result property="bLNo" column="b_l_no"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap" type="io.renren.modules.ctb.entity.CtbExportVoyageEntity"
+               extends="ctbExportVoyageMap">
+        <association property="shipCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryShipCompanyEntity"
+                     column="fk_ship_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryShipCompanyDao.selectById"/>
+    </resultMap>
+
+    <select id="listByExportId" resultMap="simpleDetailMap">
+        select *
+        from ctb_export_voyage
+        where fk_export_id = #{exportId}
+    </select>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from ctb_export_voyage
+        where id = #{id}
+    </select>
+</mapper>

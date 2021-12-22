@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsDcrHeaderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsDcrHeaderEntity" id="cstNptsDcrHeaderMap">
+        <result property="id" column="id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="emlNo" column="eml_no"/>
+        <result property="bizopEtpsSccd" column="bizop_etps_sccd"/>
+        <result property="bizopEtpsNo" column="bizop_etps_no"/>
+        <result property="bizopEtpsNm" column="bizop_etps_nm"/>
+        <result property="ownerEtpsSccd" column="owner_etps_sccd"/>
+        <result property="ownerEtpsNo" column="owner_etps_no"/>
+        <result property="ownerEtpsNm" column="owner_etps_nm"/>
+        <result property="impInvtTotalCnt" column="imp_invt_total_cnt"/>
+        <result property="expInvtTotalCnt" column="exp_invt_total_cnt"/>
+        <result property="chgoffMtpckTotalAmt" column="chgoff_mtpck_total_amt"/>
+        <result property="chgoffEndprdTotalAmt" column="chgoff_endprd_total_amt"/>
+        <result property="chgoffDclDate" column="chgoff_dcl_date"/>
+        <result property="dclTypeMarkcd" column="dcl_type_markcd"/>
+        <result property="dclEtpsSccd" column="dcl_etps_sccd"/>
+        <result property="dclEtpsNo" column="dcl_etps_no"/>
+        <result property="dclEtpsNm" column="dcl_etps_nm"/>
+        <result property="inputEtpsNo" column="input_etps_no"/>
+        <result property="inputEtpsSccd" column="input_etps_sccd"/>
+        <result property="inputEtpsNm" column="input_etps_nm"/>
+        <result property="inputTime" column="input_time"/>
+        <result property="rmk" column="rmk"/>
+        <result property="masterCuscd" column="master_cuscd"/>
+    </resultMap>
+
+
+</mapper>

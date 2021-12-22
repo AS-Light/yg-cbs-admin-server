@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsGoodsPartNoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsGoodsPartNoEntity" id="cbsGoodsPartNoMap">
+        <id property="id" column="id"/>
+        <result property="goodsPartNo" column="goods_part_no"/>
+        <result property="fkGoodsId" column="fk_goods_id"/>
+        <result property="currencyCode" column="currency_code"/>
+        <result property="unitCode" column="unit_code"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="contractCount" column="contract_count"/>
+        <result property="contractPrice" column="contract_price"/>
+        <result property="importCount" column="import_count"/>
+        <result property="exportCount" column="export_count"/>
+        <result property="planCount" column="plan_count"/>
+        <result property="produceCount" column="produce_count"/>
+        <result property="storeCount" column="store_count"/>
+        <result property="storeInCount" column="store_in_count"/>
+        <result property="storeOutCount" column="store_out_count"/>
+    </resultMap>
+
+    <resultMap id="detailMap" type="io.renren.modules.cbs.entity.CbsGoodsPartNoEntity"
+               extends="cbsGoodsPartNoMap">
+        <association property="bindEntity"
+                     javaType="io.renren.modules.bind.entity.BindCbsCtbGoodsPartNoEntity"
+                     column="goods_part_no"
+                     select="io.renren.modules.bind.dao.BindCbsCtbGoodsPartNoDao.detailWithCtb"/>
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryGoodsDao.selectById"/>
+        <association property="unitEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsUnitEntity"
+                     column="unit_code"
+                     select="io.renren.modules.thr.dao.ThrHsUnitDao.selectByCode"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+    </resultMap>
+
+    <resultMap id="detailWithoutBindMap" type="io.renren.modules.cbs.entity.CbsGoodsPartNoEntity"
+               extends="cbsGoodsPartNoMap">
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryGoodsDao.detailWithoutTenant"/>
+        <association property="unitEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsUnitEntity"
+                     column="unit_code"
+                     select="io.renren.modules.thr.dao.ThrHsUnitDao.selectByCode"/>
+        <association property="currencyEntity"
+                     javaType="io.renren.modules.thr.entity.ThrCurrencyEntity"
+                     column="currency_code"
+                     select="io.renren.modules.thr.dao.ThrCurrencyDao.selectByCode"/>
+    </resultMap>
+
+    <select id="selectByCode" resultMap="detailMap">
+        select *
+        from cbs_goods_part_no
+        where goods_part_no = #{partNo}
+    </select>
+
+    <select id="selectByCodeWithoutBind" resultMap="detailWithoutBindMap">
+        select *
+        from cbs_goods_part_no
+        where goods_part_no = #{partNo}
+    </select>
+</mapper>

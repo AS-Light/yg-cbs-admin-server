@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsProduceDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cbs.entity.CbsProduceEntity" id="cbsProduceMap">
+        <result property="id" column="id"/>
+        <result property="fkContractId" column="fk_contract_id"/>
+        <result property="fkProduceCompanyId" column="fk_produce_company_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="operator" column="operator"/>
+    </resultMap>
+
+    <resultMap id="simpleDetailMap"
+               type="io.renren.modules.cbs.entity.CbsProduceEntity" extends="cbsProduceMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.selectById"/>
+        <association property="produceCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryProduceCompanyEntity"
+                     column="fk_produce_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryProduceCompanyDao.selectById"/>
+    </resultMap>
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsProduceEntity" extends="cbsProduceMap"
+               id="simpleDetailWithGoodsItemsMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.selectById"/>
+        <association property="produceCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryProduceCompanyEntity"
+                     column="fk_produce_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryProduceCompanyDao.selectById"/>
+        <collection property="produceGoodsEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceGoodsDao.listByProduceId"/>
+    </resultMap>
+
+    <resultMap id="detailMap"
+               type="io.renren.modules.cbs.entity.CbsProduceEntity" extends="cbsProduceMap">
+        <association property="contractEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsContractEntity"
+                     column="fk_contract_id"
+                     select="io.renren.modules.cbs.dao.CbsContractDao.selectById"/>
+        <association property="produceCompanyEntity"
+                     javaType="io.renren.modules.cbs.entity.CbsDirectoryProduceCompanyEntity"
+                     column="fk_produce_company_id"
+                     select="io.renren.modules.cbs.dao.CbsDirectoryProduceCompanyDao.selectById"/>
+        <collection property="produceGoodsEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceGoodsDao.listByProduceId"/>
+        <collection property="produceGoodsStreamEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceGoodsStreamEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceGoodsStreamDao.listSimpleDetailByProduceId"/>
+        <collection property="storeGoodsInEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsStoreGoodsInEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsInDao.listSimpleDetailByProduceId"/>
+        <collection property="storeGoodsOutEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsStoreGoodsOutEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsOutDao.listSimpleDetailByProduceId"/>
+        <collection property="rawMaterialBackInStoreList"
+                    ofType="io.renren.modules.cbs.entity.CbsStoreGoodsInEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsStoreGoodsInDao.listSimpleDetailByProduceBackId"/>
+    </resultMap>
+
+
+    <resultMap type="io.renren.modules.cbs.entity.CbsProduceEntity" id="produceGoodsEntityListMap">
+        <collection property="produceGoodsEntityList"
+                    ofType="io.renren.modules.cbs.entity.CbsProduceGoodsEntity"
+                    column="id"
+                    select="io.renren.modules.cbs.dao.CbsProduceGoodsDao.listByProduceId"/>
+    </resultMap>
+
+    <select id="selectByContractId" resultMap="produceGoodsEntityListMap">
+        SELECT *
+        FROM cbs_produce
+        WHERE fk_contract_id = #{id}
+          AND STATUS = 5
+    </select>
+
+    <select id="queryIndex" resultMap="simpleDetailMap">
+        SELECT
+        i.*,
+        csgii.fk_store_goods_in_id storeGoodsInId,
+        csgi.`status` storeGoodsInStatus
+        FROM
+        cbs_produce i
+        LEFT JOIN cbs_store_goods_in_produce AS csgii ON i.id = csgii.fk_produce_id
+        LEFT JOIN cbs_store_goods_in AS csgi ON csgii.fk_store_goods_in_id = csgi.id
+        LEFT JOIN cbs_contract c ON c.id = i.fk_contract_id
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        <if test="(ew.searchForm.partNo != null and ew.searchForm.partNo != '') or (ew.searchForm.inOutType != null and ew.searchForm.inOutType != '')">
+            LEFT JOIN cbs_contract_goods cg ON cg.fk_contract_id = c.id
+            LEFT JOIN cbs_goods_part_no gpn ON gpn.goods_part_no = cg.id
+            LEFT JOIN cbs_directory_goods dg ON dg.id = gpn.fk_goods_id
+        </if>
+        -- 有公司名称时连接
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            LEFT JOIN cbs_contract_member cm ON cm.fk_contract_id = c.id
+            LEFT JOIN cbs_partner p ON p.id = cm.fk_partner_id
+        </if>
+        WHERE 1=1
+        -- 合同
+        <if test="ew.searchForm.title != null and ew.searchForm.title != ''">
+            AND c.title LIKE concat('%',#{ew.searchForm.title},'%')
+        </if>
+        <if test="ew.searchForm.contractCode != null and ew.searchForm.contractCode != ''">
+            AND c.contract_code LIKE concat('%',#{ew.searchForm.contractCode},'%')
+        </if>
+        -- 料号
+        <if test="ew.searchForm.partNo != null and ew.searchForm.partNo != ''">
+            AND cg.id = #{ew.searchForm.partNo}
+        </if>
+        -- 进出口类型和商品名称
+        <if test="ew.searchForm.inOutType != null and ew.searchForm.inOutType != ''">
+            AND cg.type = #{ew.searchForm.inOutType}
+            AND dg.`name` LIKE concat('%',#{ew.searchForm.goodsName},'%')
+        </if>
+        -- 公司
+        <if test="ew.searchForm.companyName != null and ew.searchForm.companyName != ''">
+            AND p.`name` LIKE concat('%',#{ew.searchForm.companyName},'%')
+        </if>
+        -- 本表
+        <if test="ew.id != null">
+            AND i.id = #{ew.id}
+        </if>
+        <if test="ew.fkContractIds != null">
+            AND i.fk_contract_id IN
+            <foreach item="item" index="index" collection="ew.fkContractIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="ew.status != null and ew.status != ''">
+            AND i.`status` = #{ew.status}
+        </if>
+        <if test="ew.searchForm.startingTimeOne != null and ew.searchForm.startingTimeOne != ''">
+            AND DATE_FORMAT(i.start_time, '%Y-%m-%d') >= #{ew.searchForm.startingTimeOne}
+        </if>
+        <if test="ew.searchForm.startingTimeTwo != null and ew.searchForm.startingTimeTwo != ''">
+            AND DATE_FORMAT(i.start_time, '%Y-%m-%d') &lt;= #{ew.searchForm.startingTimeTwo}
+        </if>
+        <if test="ew.searchForm.endTimeOne != null and ew.searchForm.endTimeOne != ''">
+            AND DATE_FORMAT(i.end_time, '%Y-%m-%d') >= #{ew.searchForm.endTimeOne}
+        </if>
+        <if test="ew.searchForm.endTimeTwo != null and ew.searchForm.endTimeTwo != ''">
+            AND DATE_FORMAT(i.end_time, '%Y-%m-%d') &lt;= #{ew.searchForm.endTimeTwo}
+        </if>
+        GROUP BY
+        i.id
+        ORDER BY
+        i.fk_contract_id DESC
+    </select>
+
+    <select id="selectById" resultMap="cbsProduceMap">
+        select *
+        from cbs_produce
+        where id = #{id}
+    </select>
+
+    <select id="queryByContractIdWithGoods" resultMap="simpleDetailWithGoodsItemsMap">
+        select *
+        from cbs_produce as cp
+        where cp.fk_contract_id = #{contractId}
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from cbs_produce
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetail" resultMap="simpleDetailMap">
+        select *
+        from cbs_produce
+        where id = #{id}
+    </select>
+
+    <select id="simpleDetailWithGoodsItems" resultMap="simpleDetailWithGoodsItemsMap">
+        select *
+        from cbs_produce
+        where id = #{id}
+    </select>
+
+    <select id="listForRawMaterialBack" resultMap="simpleDetailMap">
+        select *
+        from cbs_produce as cp
+        where cp.status = 4
+    </select>
+
+</mapper>

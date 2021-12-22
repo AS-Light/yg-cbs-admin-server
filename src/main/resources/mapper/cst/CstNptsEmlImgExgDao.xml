@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstNptsEmlImgExgDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstNptsEmlImgExgEntity" id="cstNptsEmlImgExgMap">
+        <result property="id" column="id"/>
+        <result property="fkEmlHeaderId" column="fk_eml_header_id"/>
+        <result property="seqNo" column="seq_no"/>
+        <result property="gdsSeqno" column="gds_seqno"/>
+        <result property="mtpckEndprdTypecd" column="mtpck_endprd_typecd"/>
+        <result property="gdsMtno" column="gds_mtno"/>
+        <result property="gdecd" column="gdecd"/>
+        <result property="gdsNm" column="gds_nm"/>
+        <result property="endprdGdsSpcfModelDesc" column="endprd_gds_spcf_model_desc"/>
+        <result property="dclUnitcd" column="dcl_unitcd"/>
+        <result property="lawfUnitcd" column="lawf_unitcd"/>
+        <result property="secdLawfUnitcd" column="secd_lawf_unitcd"/>
+        <result property="dclQty" column="dcl_qty"/>
+        <result property="dclUprcAmt" column="dcl_uprc_amt"/>
+        <result property="dclTotalAmt" column="dcl_total_amt"/>
+        <result property="dclCurrcd" column="dcl_currcd"/>
+        <result property="natcd" column="natcd"/>
+        <result property="lvyrlfModecd" column="lvyrlf_modecd"/>
+        <result property="adjmtrMarkcd" column="adjmtr_markcd"/>
+        <result property="gdsAtrcd" column="gds_atrcd"/>
+        <result property="modfMarkcd" column="modf_markcd"/>
+        <result property="rmk" column="rmk"/>
+    </resultMap>
+
+    <select id="queryByNptsEmlId" resultMap="cstNptsEmlImgExgMap">
+        select *
+        from cst_npts_eml_img_exg
+        where fk_eml_header_id = #{nptsemlId}
+        order by gds_seqno
+    </select>
+</mapper>

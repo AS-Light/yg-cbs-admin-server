@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.org_ctb.dao.OrgCtbMenuDao">
+
+    <resultMap type="io.renren.modules.org_ctb.entity.OrgCtbMenuEntity" id="orgCtbMenuMap">
+        <result property="id" column="id"/>
+        <result property="fkSysCtbMenuId" column="fk_sys_ctb_menu_id"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+    </resultMap>
+
+    <select id="selectSimpleDetailList" resultType="OrgCtbMenuEntity">
+        select
+            m.menu_id,
+            m.parent_id,
+            m.`name`,
+            m.url,
+            m.perms,
+            m.type,
+            m.icon,
+            m.order_num
+        from org_ctb_menu as ocm
+        left join sys_ctb_menu as m on ocm.fk_sys_ctb_menu_id = m.menu_id
+    </select>
+
+    <select id="queryListParentId" resultType="OrgCtbMenuEntity">
+        select
+            m.menu_id,
+            m.parent_id,
+            m.`name`,
+            m.url,
+            m.perms,
+            m.type,
+            m.icon,
+            m.order_num
+        from org_ctb_menu as ocm
+        left join sys_ctb_menu as m on ocm.fk_sys_ctb_menu_id = m.menu_id
+        where m.parent_id = #{parentId}
+        order by m.order_num asc
+    </select>
+
+    <select id="queryNotButtonList" resultType="OrgCtbMenuEntity">
+        select
+            m.menu_id,
+            m.parent_id,
+            m.`name`,
+            m.url,
+            m.perms,
+            m.type,
+            m.icon,
+            m.order_num
+        from org_ctb_menu as ocm
+        left join sys_ctb_menu as m on ocm.fk_sys_ctb_menu_id = m.menu_id
+        where m.type != 2
+        order by m.order_num asc
+    </select>
+
+    <select id="selectSysCtbMenuList" resultType="SysCtbMenuEntity">
+        SELECT
+            m.menu_id,
+            m.parent_id,
+            m.`name`,
+            m.url,
+            m.perms,
+            m.type,
+            m.icon,
+            m.order_num
+        FROM
+            org_ctb_menu org_ctb_menu
+        LEFT JOIN sys_ctb_menu m ON m.menu_id = org_ctb_menu.fk_sys_ctb_menu_id
+        WHERE m.menu_id IS NOT NULL
+    </select>
+
+</mapper>

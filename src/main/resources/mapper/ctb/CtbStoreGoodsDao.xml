@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.ctb.dao.CtbStoreGoodsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.ctb.entity.CtbStoreGoodsEntity" id="ctbStoreGoodsMap">
+        <result property="id" column="id"/>
+        <result property="fkServiceCompanyId" column="fk_service_company_id"/>
+        <result property="fkGoodsId" column="fk_goods_id"/>
+        <result property="goodsStoreCount" column="goods_store_count"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="ctbTenantId" column="ctb_tenant_id"/>
+        <association property="serviceCompanyEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryServiceCompanyEntity"
+                     column="fk_service_company_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryServiceCompanyDao.selectById"/>
+        <association property="goodsEntity"
+                     javaType="io.renren.modules.ctb.entity.CtbDirectoryGoodsEntity"
+                     column="fk_goods_id"
+                     select="io.renren.modules.ctb.dao.CtbDirectoryGoodsDao.selectById"/>
+    </resultMap>
+
+    <select id="queryIndex" resultMap="ctbStoreGoodsMap">
+        SELECT
+        i.*
+        FROM
+        ctb_store_goods i
+        -- 有料号或type时或name时连接这三个 dg.`name`和 cg.type 同时存在
+        LEFT JOIN ctb_directory_goods dg ON dg.id = i.fk_goods_id
+        LEFT JOIN ctb_directory_service_company cdsc ON cdsc.id = i.fk_service_company_id
+        WHERE 1=1
+        -- HS_CODE
+        <if test="ew.searchForm.hsCode != null and ew.searchForm.hsCode != ''">
+            AND dg.`hs_code` LIKE concat('%',#{ew.searchForm.hsCode},'%')
+        </if>
+        -- service company
+        <if test="ew.searchForm.fkServiceCompanyId != null and ew.searchForm.fkServiceCompanyId != ''">
+            AND cdsc.`id` = #{ew.searchForm.fkServiceCompanyId}
+        </if>
+        <if test="ew.searchForm.goodsStoreCount != null and ew.searchForm.goodsStoreCount == 0">
+            AND i.goods_store_count &lt;= #{ew.searchForm.goodsStoreCount}
+        </if>
+        <if test="ew.searchForm.goodsStoreCount != null and ew.searchForm.goodsStoreCount == 1">
+            AND i.goods_store_count > #{ew.searchForm.goodsStoreCount}
+        </if>
+        GROUP BY
+        i.id
+        ORDER BY
+        i.id DESC
+    </select>
+
+    <select id="detail" resultMap="ctbStoreGoodsMap">
+        select *
+        from ctb_store_goods
+        where id = #{id}
+    </select>
+</mapper>

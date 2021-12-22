@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cst.dao.CstDecListDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.cst.entity.CstDecListEntity" id="cstDecListMap">
+        <result property="id" column="id"/>
+        <result property="classMark" column="class_mark"/>
+        <result property="codeTS" column="code_t_s"/>
+        <result property="contrItem" column="contr_item"/>
+        <result property="declPrice" column="decl_price"/>
+        <result property="declTotal" column="decl_total"/>
+        <result property="dutyMode" column="duty_mode"/>
+        <result property="exgNo" column="exg_no"/>
+        <result property="exgVersion" column="exg_version"/>
+        <result property="factor" column="factor"/>
+        <result property="firstUnit" column="first_unit"/>
+        <result property="firstQty" column="first_qty"/>
+        <result property="gUnit" column="g_unit"/>
+        <result property="gModel" column="g_model"/>
+        <result property="gName" column="g_name"/>
+        <result property="gNo" column="g_no"/>
+        <result property="gQty" column="g_qty"/>
+        <result property="originCountry" column="origin_country"/>
+        <result property="secondUnit" column="second_unit"/>
+        <result property="secondQty" column="second_qty"/>
+        <result property="tradeCurr" column="trade_curr"/>
+        <result property="useTo" column="use_to"/>
+        <result property="workUsd" column="work_usd"/>
+        <result property="destinationCountry" column="destination_country"/>
+        <result property="ciqCode" column="ciq_code"/>
+        <result property="declGoodsEname" column="decl_goods_ename"/>
+        <result property="origPlaceCode" column="orig_place_code"/>
+        <result property="purpose" column="purpose"/>
+        <result property="prodValidDt" column="prod_valid_dt"/>
+        <result property="prodQgp" column="prod_qgp"/>
+        <result property="goodsAttr" column="goods_attr"/>
+        <result property="stuff" column="stuff"/>
+        <result property="uncode" column="uncode"/>
+        <result property="dangName" column="dang_name"/>
+        <result property="dangPackType" column="dang_pack_type"/>
+        <result property="dangPackSpec" column="dang_pack_spec"/>
+        <result property="engManEntCnm" column="eng_man_ent_cnm"/>
+        <result property="noDangFlag" column="no_dang_flag"/>
+        <result property="destCode" column="dest_code"/>
+        <result property="goodsSpec" column="goods_spec"/>
+        <result property="goodsModel" column="goods_model"/>
+        <result property="goodsBrand" column="goods_brand"/>
+        <result property="produceDate" column="produce_date"/>
+        <result property="prodBatchNo" column="prod_batch_no"/>
+        <result property="districtCode" column="district_code"/>
+        <result property="ciqName" column="ciq_name"/>
+        <result property="mnufctrRegno" column="mnufctr_regno"/>
+        <result property="mnufctrRegName" column="mnufctr_reg_name"/>
+    </resultMap>
+
+    <select id="queryByDecId" resultMap="cstDecListMap">
+        select *
+        from cst_dec_list
+        where fk_dec_header_id = #{decId}
+        order by g_no
+    </select>
+</mapper>

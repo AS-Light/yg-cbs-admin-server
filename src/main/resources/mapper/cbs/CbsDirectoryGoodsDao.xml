@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.cbs.dao.CbsDirectoryGoodsDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="cbsDirectoryGoodsMap"
+               type="io.renren.modules.cbs.entity.CbsDirectoryGoodsEntity">
+        <result property="id" column="id"/>
+        <result property="hsCode" column="hs_code"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="unitCode" column="unit_code"/>
+        <result property="unit" column="unit"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="available" column="available"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <resultMap id="detailMap"
+               type="io.renren.modules.cbs.entity.CbsDirectoryGoodsEntity"
+               extends="cbsDirectoryGoodsMap">
+        <association property="hsCodeEntity"
+                     javaType="io.renren.modules.thr.entity.ThrHsCodeEntity"
+                     select="io.renren.modules.thr.dao.ThrHsCodeDao.selectByHsCode"
+                     column="hs_code"/>
+    </resultMap>
+
+    <insert id="insertWithoutTenant" parameterType="io.renren.modules.cbs.entity.CbsDirectoryGoodsEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into cbs_directory_goods(hs_code, name, nickname, unit_code, unit, create_time, update_time, available, tenant_id)
+        values (#{hsCode}, #{name}, #{nickname}, #{unitCode}, #{unit}, NOW(), NOW(), 1, #{tenantId})
+    </insert>
+
+    <select id="detail" resultMap="detailMap">
+        select *
+        from cbs_directory_goods
+        where id = #{id}
+    </select>
+
+    <select id="detailWithoutTenant" resultMap="detailMap">
+        select *
+        from cbs_directory_goods
+        where id = #{id}
+    </select>
+</mapper>
